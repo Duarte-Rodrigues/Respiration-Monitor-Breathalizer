@@ -3,7 +3,7 @@
  * Copyright 2016 The MathWorks, Inc.
  */
 
-import com.mathworks.engine.MatlabEngine;
+import com.mathworks.engine.*;
 
 import javax.swing.*;
 import java.awt.*;
