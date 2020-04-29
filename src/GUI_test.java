@@ -1,14 +1,12 @@
-package matlabtest;
-
-import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import java.io.StringWriter;
-import java.sql.Array;
 import java.util.concurrent.ExecutionException;
 
-import  com.mathworks.engine.*;
+import javax.swing.JFrame;
+
+import com.mathworks.engine.EngineException;
+import com.mathworks.engine.MatlabEngine;
+import com.mathworks.engine.MatlabExecutionException;
+import com.mathworks.engine.MatlabSyntaxException;
 
 import de.erichseifert.gral.data.DataTable;
 import de.erichseifert.gral.plots.XYPlot;
@@ -16,7 +14,7 @@ import de.erichseifert.gral.plots.lines.DefaultLineRenderer2D;
 import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.ui.InteractivePanel;
 
-public class GUI {
+public class GUI_test {
 
 	private JFrame frame;
 
@@ -29,8 +27,8 @@ public class GUI {
 	 * @throws MatlabSyntaxException 
 	 * @throws MatlabExecutionException 
 	 */
-	
 	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
+		
         MatlabEngine eng = MatlabEngine.startMatlab();        
         eng.eval("[bpm wave Fs hard soft mild]=breathingClass_Rate('C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav');");
         
@@ -58,12 +56,11 @@ public class GUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI window = new GUI();
+					GUI_test window = new GUI_test();
 					window.frame.setVisible(true);
 					window.frame.getContentPane().add(new InteractivePanel(plot));
 					LineRenderer lines = new DefaultLineRenderer2D();
 					plot.setLineRenderers(audioData, lines);
-				    
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -74,7 +71,7 @@ public class GUI {
 	/**
 	 * Create the application.
 	 */
-	public GUI() {
+	public GUI_test() {
 		initialize();
 	}
 
@@ -83,10 +80,8 @@ public class GUI {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 628, 468);
+		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	
 	}
-	
 
 }
