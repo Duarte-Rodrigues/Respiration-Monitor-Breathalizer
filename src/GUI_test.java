@@ -13,6 +13,10 @@ import de.erichseifert.gral.plots.XYPlot;
 import de.erichseifert.gral.plots.lines.DefaultLineRenderer2D;
 import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.ui.InteractivePanel;
+import java.awt.FlowLayout;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import java.awt.BorderLayout;
 
 public class GUI_test {
 
@@ -80,8 +84,13 @@ public class GUI_test {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 499, 327);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JInternalFrame internalFrame = new JInternalFrame("New JInternalFrame");
+		internalFrame.setResizable(true);
+		frame.getContentPane().add(internalFrame, BorderLayout.CENTER);
+		internalFrame.setVisible(true);
 	}
 
 }
