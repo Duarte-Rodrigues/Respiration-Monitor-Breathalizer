@@ -79,7 +79,6 @@
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/widgets.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/wizard.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/xml.jar"/>
-	<classpathentry kind="lib" path="F:/MATLAB/java/jar/matlabcontrol-0.0.1.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/gral-core-0.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
