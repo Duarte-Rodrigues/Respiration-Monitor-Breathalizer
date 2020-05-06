@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -58,6 +60,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import java.awt.SystemColor;
@@ -102,27 +105,15 @@ public class GUI {
 	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
 
 		//------------------------------------------GET FILTERED AUDIO AND INTENSITY MATLAB DATA-------------------------------
-		MatlabEngine eng = MatlabEngine.startMatlab();  
-		//C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav
-		eng.eval("[bpm wave Fs hard soft mild]=breathingClass_Rate('C:\\\\Users\\\\A541\\\\OneDrive - Universidade do Porto\\\\MIB\\\\3ºAno\\\\2º semestre\\\\LIEB\\\\Projeto\\\\Compiled breath audios\\\\Vesicular breath sound\\\\A_rale_vesicular.wav');");
+		
+		MatlabEngine eng=MatlabEngine.startMatlab();
 
-		double bpm=eng.getVariable("bpm");
-		double[] wave=eng.getVariable("wave");
-		double fs=eng.getVariable("Fs");
-		double[][] hard=eng.getVariable("hard");
-		double[][] soft=eng.getVariable("soft");
-		double[][] mild=eng.getVariable("mild");
-		double[] stuff={1,2,3,4,5};
-
-		//C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Matlab\\A_rale_bronchial.wav
-		eng.eval("[x fs Xw Xwo delta_t nf]=wheezeDetect('C:\\\\Users\\\\A541\\\\OneDrive - Universidade do Porto\\\\MIB\\\\3ºAno\\\\2º semestre\\\\LIEB\\\\Projeto\\\\Matlab\\\\A_rale_bronchial.wav');");
-		eng.close();
 		//---------------------------------------------------------------------------------------------------------------
 		frmRespiratorySoundAnalysis = new JFrame();
 		frmRespiratorySoundAnalysis.setTitle("Respiratory Sound Analysis");
 		frmRespiratorySoundAnalysis.setBounds(100, 100, 538, 351);
 		frmRespiratorySoundAnalysis.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmRespiratorySoundAnalysis.setVisible(true);
+		
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRespiratorySoundAnalysis.getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -336,7 +327,7 @@ public class GUI {
 		tabbedPane.addTab("Audio Selection", null, panel_AudioSelect, null);
 
 		JButton btnSelectAudio = new JButton("Select");
-		btnSelectAudio.setBounds(421, 45, 61, 23);
+		btnSelectAudio.setBounds(421, 10, 61, 23);
 		btnSelectAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -344,12 +335,22 @@ public class GUI {
 		panel_AudioSelect.setLayout(null);
 
 		Choice choice = new Choice();
-		choice.setBounds(145, 48, 151, 20);
+		choice.setBounds(241, 10, 151, 23);
 		panel_AudioSelect.add(choice);
 		panel_AudioSelect.add(btnSelectAudio);
 
 
-		//Organizar audio e criar o seu plot
+		//+++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++
+		getBreathingRate br=new getBreathingRate(new String("C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav"),eng);
+		
+		double bpm=br.getBpm();
+		double[] wave=br.getWave();
+		double fs=br.getFs();
+		double[] env=br.getEnv();
+		double[][] hard=br.getHard();
+		double[][] soft=br.getSoft();
+		double[][] mild=br.getMild();
+		//++++++++++++++++++++++++++++++++PLOT AUDIO SIGNAL++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 		DataTable audioData = new DataTable(Double.class, Double.class);
 
@@ -359,13 +360,10 @@ public class GUI {
 			audioData.add(time[i],wave[i]);
 		}
 
-		XYPlot plot = new XYPlot(audioData);
-		plot.getTitle().setText("Audio Signal");
-		plot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time(s)"));
-		plot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Intensity"));
+		XYPlot audioPlot = new XYPlot(audioData);
 
-		//Definição do painel onde ficará o sinal aúdio
-		DrawablePanel audioPlotPanel = new DrawablePanel(plot);
+		//Definição do painel onde ficará o sinal audio
+		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
 		audioPlotPanel.setBounds(30, 88, 452, 121);
 		audioPlotPanel.setBackground(Color.WHITE);
 		panel_AudioSelect.add(audioPlotPanel);
@@ -375,23 +373,36 @@ public class GUI {
 		Color blue=new Color(0,200,255);
 		lines.setColor(blue); points.setColor(blue);
 		lines.setStroke(new BasicStroke(1)); points.setShape(null);
-		plot.setLineRenderers(audioData, lines);
-		plot.setPointRenderers(audioData, points);
+		audioPlot.setLineRenderers(audioData, lines);
+		audioPlot.setPointRenderers(audioData, points);
 
-
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++END OF AUDIO SIGNAL PLOT+++++++++++++++++++++++++++++++++++++++++++++
+		
+		
 		JButton btnPlayAudio = new JButton("Play");
-		btnPlayAudio.setBounds(87, 237, 53, 23);
+		btnPlayAudio.setBounds(87, 237, 70, 23);
 		panel_AudioSelect.add(btnPlayAudio);
 
 		JButton btnPauseAudio = new JButton("Pause");
-		btnPauseAudio.setBounds(145, 237, 61, 23);
+		btnPauseAudio.setBounds(167, 237, 77, 23);
 		panel_AudioSelect.add(btnPauseAudio);
 
 		JPanel panel_AudioAnalysis = new JPanel();
 		tabbedPane.addTab("Audio Analysis", null, panel_AudioAnalysis, null);
 		panel_AudioAnalysis.setLayout(null);
 
-		JTextPane txtpnDfdbnntdf = new JTextPane();
+		JTextPane txtpnDfdbnntdf = new JTextPane();		
+		JLabel lblNewLabel_7 = new JLabel("Time (s)");
+		lblNewLabel_7.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_7.setBounds(227, 212, 46, 14);
+		panel_AudioSelect.add(lblNewLabel_7);
+		
+		JLabel lblNewLabel_8 = new JLabel("Audio Signal");
+		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel_8.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_8.setBounds(193, 64, 110, 14);
+		panel_AudioSelect.add(lblNewLabel_8);
+
 		txtpnDfdbnntdf.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		txtpnDfdbnntdf.setText("The recorded breathing sound\r\n" + 
 				"is analysed in order to recover\r\n" + 
@@ -432,13 +443,21 @@ public class GUI {
 		JButton btnNewButton = new JButton("Breathing Rate");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				breathRatePopUp BRpopUp=new breathRatePopUp();
+				BRpopUp.openPopUp(bpm, wave, fs, env, hard, mild, soft);
+				
 			}
+			
 		});
-		btnNewButton.setBounds(74, 68, 105, 23);
+		btnNewButton.setBounds(58, 68, 144, 23);
 		panel_AudioAnalysis.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Wheeze Detection");
-		btnNewButton_1.setBounds(337, 68, 121, 23);
+		btnNewButton_1.setBounds(321, 68, 151, 23);
 		panel_AudioAnalysis.add(btnNewButton_1);
+		
+		frmRespiratorySoundAnalysis.setVisible(true);
+		
+		eng.close();
 	}
 }

@@ -11,19 +11,19 @@ import com.mathworks.engine.MatlabSyntaxException;
 
 public class getBreathingRate {
 	
-	public  getBreathingRate(String filename) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
+	public  getBreathingRate(String filename,MatlabEngine engine) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
 		//------------------------------------------GET FILTERED AUDIO AND INTENSITY MATLAB DATA-------------------------------
-	    MatlabEngine eng = MatlabEngine.startMatlab();        
-	    eng.eval("[bpm wave Fs hard soft mild]=breathingClass_Rate(" + filename + ");");
+	    //MatlabEngine eng = MatlabEngine.startMatlab();        
+	    engine.evalAsync("[bpm wave env Fs hard soft mild]=breathingClass_Rate('" + filename + "');");
 	    
-	    bpm=eng.getVariable("bpm");
-	    wave=eng.getVariable("wave");
-	    fs=eng.getVariable("Fs");
-	    hard=eng.getVariable("hard");
-	    soft=eng.getVariable("soft");
-	    mild=eng.getVariable("mild");
+	    bpm=engine.getVariable("bpm");
+	    wave=engine.getVariable("wave");
+	    env=engine.getVariable("env");
+	    fs=engine.getVariable("Fs");
+	    hard=engine.getVariable("hard");
+	    soft=engine.getVariable("soft");
+	    mild=engine.getVariable("mild");
 	    
-	    eng.close();
 
 	}
 	
@@ -51,8 +51,14 @@ public class getBreathingRate {
 		return mild;
 	}
 
+	public double[] getEnv() {
+		return env;
+	}
+
+
 	private double bpm;
     private double[] wave;
+    private double[] env;
     private double fs;
     private double[][] hard;
     private double[][] soft;
