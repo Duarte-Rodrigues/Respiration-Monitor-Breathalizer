@@ -35,8 +35,11 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 
@@ -66,12 +69,14 @@ import javax.swing.UIManager;
 import java.awt.SystemColor;
 import java.awt.Font;
 import javax.swing.JEditorPane;
+import javax.swing.JTextField;
 
 
 
 public class GUI {
 
 	private static JFrame frmRespiratorySoundAnalysis;
+	private static JTextField textField;
 
 	public static ImageIcon scaleImage(ImageIcon icon, int w, int h)
 	{
@@ -101,8 +106,11 @@ public class GUI {
 	 * @throws ExecutionException 
 	 * @throws MatlabSyntaxException 
 	 * @throws MatlabExecutionException 
+	 * @throws LineUnavailableException 
+	 * @throws IOException 
+	 * @throws UnsupportedAudioFileException 
 	 */
-	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
+	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException, UnsupportedAudioFileException, IOException, LineUnavailableException {
 
 		//------------------------------------------GET FILTERED AUDIO AND INTENSITY MATLAB DATA-------------------------------
 		
@@ -125,10 +133,10 @@ public class GUI {
 		//uma fotografia qualquer de pessoa nao lida
 		ImageIcon img = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\person-vector.png");
 		ImageIcon resizedImg = scaleImage(img,106,136);
-		JLabel nophoto =new JLabel();
-		nophoto.setIcon(resizedImg);
-		nophoto.setBounds(20, 22, 106, 136);
-		panel_Home.add(nophoto);
+		JLabel photo =new JLabel();
+		photo.setIcon(resizedImg);
+		photo.setBounds(20, 22, 106, 136);
+		panel_Home.add(photo);
 
 		AtomicReference<List<String>> audioFiles = new AtomicReference<List<String>>();
 
@@ -163,15 +171,30 @@ public class GUI {
 
 					BufferedReader reader;
 					List<String> information=new ArrayList<String>();
+					
 					try {
-						reader = new BufferedReader(new FileReader(Pinfo.get(0)));
+						reader = new BufferedReader(new FileReader(Pinfo.get(0)));//path para o .txt
 						String line = reader.readLine();
-
+						String prevAp ="";
 						while (line != null) {
-							information.add(line);
+							//colocar aqui um if e fazer string manipulation
+							if (information.size()<5) {
+								information.add(line);
+							}
+							else if (information.size()==5) {
+								information.remove(prevAp);
+								prevAp=prevAp+line;
+								information.add(prevAp);
+							}
+							else if (information.size()>5) {
+								information.remove(prevAp);
+								prevAp=prevAp+"\n"+line;
+								information.add(prevAp);
+							}
 							// read next line
 							line = reader.readLine();
 						}
+						
 						reader.close();
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -179,10 +202,7 @@ public class GUI {
 
 					ImageIcon Patimg = new ImageIcon(information.get(0));
 					ImageIcon resizedPat = scaleImage(Patimg,106,136);
-					//JLabel photo =new JLabel(resizedPat);
-					//photo.setBounds(20, 22, 106, 136);
-					//panel_Home.add(photo);
-					nophoto.setIcon(resizedPat);
+					photo.setIcon(resizedPat);
 					//são text panes pq as informações das caixas de text saolidas de forma diferente das jlabels e não da erro
 					//Add Patient Name
 					JTextPane PatName = new JTextPane();
@@ -220,24 +240,17 @@ public class GUI {
 					PatHno.setBounds(206, 107, 83, 14);
 					PatHno.setFont(new Font("Tahoma", Font.PLAIN, 11));
 					panel_Home.add(PatHno);
-					//Add Patient last appointment date
-					JTextPane PatLDate = new JTextPane();
-					PatLDate.setText(information.get(5));
-					PatLDate.setEditable(false);
-					PatLDate.setForeground(Color.BLACK);
-					PatLDate.setBackground(UIManager.getColor("Button.background"));
-					PatLDate.setBounds(275, 131, 106, 14);
-					PatLDate.setFont(new Font("Tahoma", Font.PLAIN, 11));
-					panel_Home.add(PatLDate);
-					//Add information about last appointment
+					//Add information about previous appointments
 					JTextPane LastInfo = new JTextPane();
-					LastInfo.setText(information.get(6));
+					LastInfo.setText(information.get(5));
 					LastInfo.setEditable(false);
 					LastInfo.setForeground(Color.BLACK);
 					LastInfo.setBackground(UIManager.getColor("Button.background"));
-					LastInfo.setBounds(195, 167, 317, 38);
 					LastInfo.setFont(new Font("Tahoma", Font.PLAIN, 11));
-					panel_Home.add(LastInfo);
+					JScrollPane scrollInfo = new JScrollPane(LastInfo);
+					scrollInfo.setBounds(20,160,476,48);
+					scrollInfo.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+					panel_Home.add(scrollInfo);
 					//label for new anotations
 					JTextPane An = new JTextPane();
 					An.setText("Annotations:");
@@ -256,7 +269,7 @@ public class GUI {
 					newinfo.setBounds(116,218,378,55);
 					newinfo.setFont(new Font("Tahoma", Font.PLAIN, 11));
 					panel_Home.add(newinfo);
-//					Código comentado porque só deve ser implementado no exato moneto antes de fechar o programa
+//					Código comentado porque só deve ser implementado no exato momento antes de fechar o programa
 //					Vai ser necessario passar a string writeback por atomicreference no fim
 //					String writeBack="";
 //					if (newinfo.getText()!=" ") {
@@ -278,7 +291,7 @@ public class GUI {
 //							Bwriter.close();
 //							Breader.close();
 //						} catch (IOException e1) {
-//							// TODO Auto-generated catch block
+//							
 //							e1.printStackTrace();
 //						}
 //
@@ -291,6 +304,7 @@ public class GUI {
 				}
 			}
 		});
+		
 		//lista dos paths para os audios
 		List<String> audios = audioFiles.get();
 
@@ -298,73 +312,52 @@ public class GUI {
 		panel_Home.add(ImportBtn);
 		tabbedPane.addTab("Home", null, panel_Home, null);
 
-		JLabel lblNewLabel = new JLabel("Name:");
-		lblNewLabel.setBounds(142, 34, 57, 14);
-		panel_Home.add(lblNewLabel);
+		JLabel lblName = new JLabel("Name:");
+		lblName.setBounds(142, 34, 57, 14);
+		panel_Home.add(lblName);
 
-		JLabel lblNewLabel_1= new JLabel("Age:");
-		lblNewLabel_1.setBounds(142,59,46,14);
-		panel_Home.add(lblNewLabel_1);
+		JLabel lblAge= new JLabel("Age:");
+		lblAge.setBounds(142,59,46,14);
+		panel_Home.add(lblAge);
 
-		JLabel lblNewLabel_2= new JLabel("Date of Birth:");
-		lblNewLabel_2.setBounds(142, 84, 83, 14);
-		panel_Home.add(lblNewLabel_2);
+		JLabel lblDoB= new JLabel("Date of Birth:");
+		lblDoB.setBounds(142, 84, 83, 14);
+		panel_Home.add(lblDoB);
 
-		JLabel lblNewLabel_3 = new JLabel("Health No.:");
-		lblNewLabel_3.setBounds(142, 109, 64, 14);
-		panel_Home.add(lblNewLabel_3);
+		JLabel lblHno = new JLabel("Health No.:");
+		lblHno.setBounds(142, 109, 64, 14);
+		panel_Home.add(lblHno);
 
-		JLabel lblNewLabel_4 = new JLabel("Last Appointment Date:");
-		lblNewLabel_4.setBounds(142, 134, 178, 14);
-		panel_Home.add(lblNewLabel_4);
-
-		JLabel lblNewLabel_5 = new JLabel("Last Appointment Annotations:");
-		lblNewLabel_5.setBounds(20, 169, 176, 14);
-		panel_Home.add(lblNewLabel_5);
-		//hold...
-		//----------------------------------------------------------------------------------------
+		JLabel lblPAI = new JLabel("Previous Appointments Information");
+		lblPAI.setBounds(229,138,210,14);
+		panel_Home.add(lblPAI);
+		
+		//----------------------------------------------Audio Selection---------------------------------------------------
 		JPanel panel_AudioSelect = new JPanel();
 		tabbedPane.addTab("Audio Selection", null, panel_AudioSelect, null);
-
-		JButton btnSelectAudio = new JButton("Select");
-		btnSelectAudio.setBounds(421, 10, 61, 23);
-		btnSelectAudio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		panel_AudioSelect.setLayout(null);
-
-		Choice choice = new Choice();
-		choice.setBounds(241, 10, 151, 23);
-		panel_AudioSelect.add(choice);
-		panel_AudioSelect.add(btnSelectAudio);
-
-
-		//+++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++
-		getBreathingRate br=new getBreathingRate(new String("C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav"),eng);
 		
-		double bpm=br.getBpm();
-		double[] wave=br.getWave();
-		double fs=br.getFs();
-		double[] env=br.getEnv();
-		double[][] hard=br.getHard();
-		double[][] soft=br.getSoft();
-		double[][] mild=br.getMild();
+		//+++++++++++++++++++++++++++++++GET MATLAB AUDIO PLOT DATA++++++++++++++++++++++++++++++++++++++++++++
+		String pathAud= new String("C:\\Users\\dtrdu\\Desktop\\Duarte\\audio_wav\\A_rale_wheezing_asthma_8yearold.wav");
+		getAudioPlot Audplot = new getAudioPlot(pathAud,eng);
+		
+		double[] wavefrm=Audplot.getWavefrm();
+		double FS=Audplot.getFS();
 		//++++++++++++++++++++++++++++++++PLOT AUDIO SIGNAL++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+		
 		DataTable audioData = new DataTable(Double.class, Double.class);
-
-		double[] time= new double[wave.length];
+		//Conversão para tempo
+		double[] time= new double[wavefrm.length];
 		for(int i=0; i<time.length;i++) {
-			time[i]=i/fs;
-			audioData.add(time[i],wave[i]);
+			time[i]=i/FS;
+			audioData.add(time[i],wavefrm[i]);
 		}
 
 		XYPlot audioPlot = new XYPlot(audioData);
 
 		//Definição do painel onde ficará o sinal audio
 		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
-		audioPlotPanel.setBounds(30, 88, 452, 121);
+		audioPlotPanel.setBounds(28, 73, 452, 121);
 		audioPlotPanel.setBackground(Color.WHITE);
 		panel_AudioSelect.add(audioPlotPanel);
 		//Lines and points config
@@ -377,32 +370,129 @@ public class GUI {
 		audioPlot.setPointRenderers(audioData, points);
 
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++END OF AUDIO SIGNAL PLOT+++++++++++++++++++++++++++++++++++++++++++++
+				
 		
+		JButton btnSelectAudio = new JButton("Select");
+		btnSelectAudio.setBounds(390, 10, 90, 23);
+		btnSelectAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+			
+		});
+		panel_AudioSelect.setLayout(null);
+
+		
+		JComboBox<String> audioChoice = new JComboBox<>();
+		audioChoice.setBounds(80, 10, 151, 23);
+		panel_AudioSelect.add(btnSelectAudio);
+		panel_AudioSelect.add(audioChoice);
+		
+		AudioPlayer audioSel= new AudioPlayer(pathAud);
+		
+		
+		JButton btnResumeAudio = new JButton("Resume");
+		btnResumeAudio.setBounds(10, 239, 90, 23);
+		btnResumeAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					audioSel.resume();
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+					
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnResumeAudio.setVisible(false);
+		panel_AudioSelect.add(btnResumeAudio);
 		
 		JButton btnPlayAudio = new JButton("Play");
-		btnPlayAudio.setBounds(87, 237, 70, 23);
+		btnPlayAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				audioSel.play();
+				btnResumeAudio.setVisible(true);
+				btnPlayAudio.setVisible(false);
+			}
+		});
+		btnPlayAudio.setBounds(30, 239, 70, 23);
 		panel_AudioSelect.add(btnPlayAudio);
-
+		
+		
 		JButton btnPauseAudio = new JButton("Pause");
-		btnPauseAudio.setBounds(167, 237, 77, 23);
+		btnPauseAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				audioSel.pause();
+			}
+		});
+		btnPauseAudio.setBounds(110, 239, 77, 23);
 		panel_AudioSelect.add(btnPauseAudio);
+		
+		JButton btnRestartAudio = new JButton("Restart");
+		btnRestartAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					audioSel.restart();
+				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e1) {
+					
+					e1.printStackTrace();
+				}
+			}
+			
+		});
+		btnRestartAudio.setBounds(201, 239, 77, 23);
+		panel_AudioSelect.add(btnRestartAudio);
 
-		JPanel panel_AudioAnalysis = new JPanel();
-		tabbedPane.addTab("Audio Analysis", null, panel_AudioAnalysis, null);
-		panel_AudioAnalysis.setLayout(null);
+		
 
 		JTextPane txtpnDfdbnntdf = new JTextPane();		
 		JLabel lblNewLabel_7 = new JLabel("Time (s)");
 		lblNewLabel_7.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_7.setBounds(227, 212, 46, 14);
+		lblNewLabel_7.setBounds(231, 209, 46, 14);
 		panel_AudioSelect.add(lblNewLabel_7);
 		
 		JLabel lblNewLabel_8 = new JLabel("Audio Signal");
 		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel_8.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_8.setBounds(193, 64, 110, 14);
+		lblNewLabel_8.setBounds(201, 44, 110, 28);
 		panel_AudioSelect.add(lblNewLabel_8);
-
+		
+		JTextField  GotoIndex = new JTextField(10);
+		GotoIndex.setBounds(385, 240, 66, 20);
+		panel_AudioSelect.add(GotoIndex);
+		GotoIndex.setColumns(10);
+		
+		
+		JButton btnNewButton_2 = new JButton("Go to");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String ind = GotoIndex.getText();
+				double timeInd = (Double.parseDouble(ind));
+				long index = (long)timeInd*1000000;
+				try {
+					audioSel.jump(index);
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_2.setBounds(296, 239, 79, 23);
+		panel_AudioSelect.add(btnNewButton_2);
+		
+		
+		JLabel lblNewLabel = new JLabel("sec.");
+		lblNewLabel.setBounds(461, 243, 46, 14);
+		panel_AudioSelect.add(lblNewLabel);
+		
+		JButton btnNewButton_3 = new JButton("Take Note");
+		btnNewButton_3.setBounds(385, 205, 95, 23);
+		panel_AudioSelect.add(btnNewButton_3);
+		
+		
+		//-----------------------AUDIO ANALYSIS-------------------------------------
+		JPanel panel_AudioAnalysis = new JPanel();
+		tabbedPane.addTab("Audio Analysis", null, panel_AudioAnalysis, null);
+		panel_AudioAnalysis.setLayout(null);
 		txtpnDfdbnntdf.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		txtpnDfdbnntdf.setText("The recorded breathing sound\r\n" + 
 				"is analysed in order to recover\r\n" + 
@@ -440,6 +530,18 @@ public class GUI {
 		lblNewLabel_6.setBounds(200, 24, 137, 14);
 		panel_AudioAnalysis.add(lblNewLabel_6);
 		
+		//+++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++
+		//C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav
+		getBreathingRate br=new getBreathingRate(new String("C:\\Users\\dtrdu\\Desktop\\Duarte\\audio_wav\\A_rale_wheezing_asthma_8yearold.wav"),eng);
+		
+		double bpm=br.getBpm();
+		double[] wave=br.getWave();
+		double fs=br.getFs();
+		double[] env=br.getEnv();
+		double[][] hard=br.getHard();
+		double[][] soft=br.getSoft();
+		double[][] mild=br.getMild();
+		
 		JButton btnNewButton = new JButton("Breathing Rate");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -451,6 +553,7 @@ public class GUI {
 		});
 		btnNewButton.setBounds(58, 68, 144, 23);
 		panel_AudioAnalysis.add(btnNewButton);
+		
 		
 		JButton btnNewButton_1 = new JButton("Wheeze Detection");
 		btnNewButton_1.setBounds(321, 68, 151, 23);

@@ -15,6 +15,7 @@ import com.mathworks.engine.MatlabSyntaxException;
 import de.erichseifert.gral.data.DataTable;
 import de.erichseifert.gral.graphics.Label;
 import de.erichseifert.gral.plots.XYPlot;
+import de.erichseifert.gral.plots.axes.AxisRenderer;
 import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.plots.lines.SmoothLineRenderer2D;
 import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
@@ -70,6 +71,7 @@ public class breathRatePopUp {
 	/**
 	 * @wbp.parser.entryPoint
 	 */
+	@SuppressWarnings("unchecked")
 	public void openPopUp(double bpm,double [] audioWav, double fs, double[] env, double[][] hard,double[][] mild, double [][] soft) {
 	
 		
@@ -218,10 +220,21 @@ public class breathRatePopUp {
 		DataTable hardData = new DataTable(Double.class, Double.class);
 		DataTable softData = new DataTable(Double.class, Double.class);
 		DataTable mildData = new DataTable(Double.class, Double.class);
+		
 		for(int i=0; i<time.length;i++) {
 			time[i]=i/fs;
 			envData.add(time[i],env[i]);
 		}
+		if (hard==null) {
+			hard=new double[0][0];
+		}
+		if (soft==null) {
+			soft=new double[0][0];
+		}
+		if (mild==null) {
+			mild=new double[0][0];
+		}
+		
 		for(int i=0; i<hard.length; i++) {
 			hardData.add(hard[i][1],(hard[i][0]));
 		}
@@ -232,7 +245,7 @@ public class breathRatePopUp {
 			mildData.add(mild[k][1],(mild[k][0]));
 		}
 		
-		//Create plot data
+		//Create Envelope plot data
 		XYPlot envPlot = new XYPlot(envData,hardData,softData,mildData);
 		envPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time(s)"));
 		envPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Normalized Intensity"));
