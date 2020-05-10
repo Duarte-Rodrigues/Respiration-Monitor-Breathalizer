@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.mathworks.engine.EngineException;
@@ -26,10 +29,12 @@ import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
+import sun.awt.image.ToolkitImage;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Shape;
 
 import javax.swing.JTextField;
@@ -37,10 +42,17 @@ import javax.swing.JTable;
 import javax.swing.JSeparator;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import java.awt.SystemColor;
+import java.awt.TexturePaint;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 import de.erichseifert.gral.graphics.Drawable;
 import de.erichseifert.gral.graphics.Insets2D;
 
@@ -75,9 +87,10 @@ public class wheezePopUp {
 	  }
 	
 	/**
+	 * @throws IOException 
 	 * @wbp.parser.entryPoint
 	 */
-	public void openPopUp(double[] x, String state, double fs, double[][][] Xw, double[][] Xwo,double[] delta_t,double nf) {
+	public void openPopUp(double[] x, String state, double fs, String normSpectrumPath, String wheezeSpectrumPath,double[] delta_t,double nf) throws IOException {
 	
 		
 		wheezeFrame = new JFrame();
@@ -101,13 +114,13 @@ public class wheezePopUp {
 		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(379, 42, 185, 34);
+		lblNewLabel_2.setBounds(444, 39, 185, 34);
 		wheezeFrame.getContentPane().add(lblNewLabel_2);
 		
 		JLabel wheezingIntTxtBox = new JLabel("");
 		wheezingIntTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
 		wheezingIntTxtBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		wheezingIntTxtBox.setBounds(379, 87, 185, 116);
+		wheezingIntTxtBox.setBounds(454, 84, 185, 116);
 		wheezeFrame.getContentPane().add(wheezingIntTxtBox);
 		
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++PLOTS++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -186,12 +199,51 @@ public class wheezePopUp {
 		wheezeActivityPlot.setLineRenderers(wheezeSource, wheezeLines);
 		wheezeActivityPlot.setPointRenderers(wheezeSource, wheezePoints);
 		
-		//+++++++++++++++++++++++++++SPECTRUM DATA++++++++++++++++++++++++++++
+		DataTable dummyData = new DataTable(Double.class, Double.class);
 		
-		DataTable specData = new DataTable(Double.class, Double.class);
+		//This is data that just allows to create the plot whose background will be the image we want
+		dummyData.add(0.0,0.0);
+		XYPlot spectrumPlot = new XYPlot(dummyData);
 		
+		PointRenderer dummyPoints = new DefaultPointRenderer2D(); dummyPoints.setShape(null);
 		
+		//Try to get spectrum image from the path gotten as a parameter (has a throw to IO error)
+		BufferedImage spectrumImage = ImageIO.read(new File(normSpectrumPath));
 		
+		//BufferedImage rgbSpectrumImage=new BufferedImage(spectrumImage.getWidth(),spectrumImage.getHeight(),BufferedImage.TYPE_INT_ARGB);
+		TexturePaint spectrumPaint=new TexturePaint(spectrumImage, new Rectangle2D.Double(0.0, 0.0, 1.0, 1.0));
+		
+		//Config axis and labels
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Frequency"));
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).getLabel().setRotation(90);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelDistance(0.2);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickLabelDistance(0.1);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLength(0.2);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickLength(0.2);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelsOutside(true);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickLabelsOutside(true);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickSpacing(0.5);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setLabelDistance(0.1);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabelDistance(0.4);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setIntersection(-Double.MAX_VALUE);
+		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setIntersection(-Double.MAX_VALUE);
+		
+		spectrumPlot.getAxis(XYPlot.AXIS_Y).setMax(1000);
+		spectrumPlot.getAxis(XYPlot.AXIS_X).setMax(10);
+		
+		//Set insets for labels
+		spectrumPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
+		
+		//Set spectrum img from matlab as the plot's background
+		spectrumPlot.getPlotArea().setBackground(spectrumPaint);
+		
+		//Set panel with the plot
+		InteractivePanel spectrumPanel = new InteractivePanel(spectrumPlot);
+		spectrumPanel.setBounds(10, 54, 500, 146);
+		spectrumPanel.setBackground(Color.white);
+		wheezeFrame.getContentPane().add(spectrumPanel);
+
 		wheezeFrame.setVisible(true);
 	}
 	
@@ -216,6 +268,4 @@ public class wheezePopUp {
 	      }
 	      return min;
 	   }
-	 
-	  
 }

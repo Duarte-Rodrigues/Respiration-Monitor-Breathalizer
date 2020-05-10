@@ -1,4 +1,5 @@
 
+
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,10 @@ import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
+import matlabtest.getWheeze;
+import matlabtest.wheezePopUp;
+import sun.awt.image.ToolkitImage;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -57,6 +62,7 @@ import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,26 +84,6 @@ public class GUI {
 	private static JFrame frmRespiratorySoundAnalysis;
 	private static JTextField textField;
 
-	public static ImageIcon scaleImage(ImageIcon icon, int w, int h)
-	{
-		int nw = icon.getIconWidth();
-		int nh = icon.getIconHeight();
-
-		if(icon.getIconWidth() > w)
-		{
-			nw = w;
-			nh = (nw * icon.getIconHeight()) / icon.getIconWidth();
-		}
-
-		if(nh > h)
-		{
-			nh = h;
-			nw = (icon.getIconWidth() * nh) / icon.getIconHeight();
-		}
-
-		return new ImageIcon(icon.getImage().getScaledInstance(nw, nh, Image.SCALE_DEFAULT));
-	}
-
 	/**
 	 * Launch the application.
 	 * @throws InterruptedException 
@@ -115,6 +101,8 @@ public class GUI {
 		//------------------------------------------GET FILTERED AUDIO AND INTENSITY MATLAB DATA-------------------------------
 		
 		MatlabEngine eng=MatlabEngine.startMatlab();
+		String filename=new String("C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav");
+		
 
 		//---------------------------------------------------------------------------------------------------------------
 		frmRespiratorySoundAnalysis = new JFrame();
@@ -337,7 +325,7 @@ public class GUI {
 		tabbedPane.addTab("Audio Selection", null, panel_AudioSelect, null);
 		
 		//+++++++++++++++++++++++++++++++GET MATLAB AUDIO PLOT DATA++++++++++++++++++++++++++++++++++++++++++++
-		String pathAud= new String("C:\\Users\\dtrdu\\Desktop\\Duarte\\audio_wav\\A_rale_wheezing_asthma_8yearold.wav");
+		String pathAud= filename;
 		getAudioPlot Audplot = new getAudioPlot(pathAud,eng);
 		
 		double[] wavefrm=Audplot.getWavefrm();
@@ -532,7 +520,7 @@ public class GUI {
 		
 		//+++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++
 		//C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav
-		getBreathingRate br=new getBreathingRate(new String("C:\\Users\\dtrdu\\Desktop\\Duarte\\audio_wav\\A_rale_wheezing_asthma_8yearold.wav"),eng);
+		getBreathingRate br=new getBreathingRate(filename,eng);
 		
 		double bpm=br.getBpm();
 		double[] wave=br.getWave();
@@ -554,13 +542,53 @@ public class GUI {
 		btnNewButton.setBounds(58, 68, 144, 23);
 		panel_AudioAnalysis.add(btnNewButton);
 		
+		//++++++++++++++GET WHEEZING DATA+++++++++++++++++
+		getWheeze wheeze=new getWheeze(filename,eng);
+		double[] x=wheeze.getX();
+		String state=wheeze.getState();
+		double fs1=wheeze.getFs();
+		String normSpectrumPath=wheeze.getNormSpectrumPath();
+		String wheezeSpectrumPath=wheeze.getWheezeSpectrumPath();
+		double[] delta_t=wheeze.getDelta_t();
+		double Nf= wheeze.getNf();
 		
 		JButton btnNewButton_1 = new JButton("Wheeze Detection");
 		btnNewButton_1.setBounds(321, 68, 151, 23);
 		panel_AudioAnalysis.add(btnNewButton_1);
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				wheezePopUp wheezepopUp=new wheezePopUp();
+				try {
+					wheezepopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, delta_t, Nf);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		frmRespiratorySoundAnalysis.setVisible(true);
 		
 		eng.close();
+	}
+	
+	public static ImageIcon scaleImage(ImageIcon icon, int w, int h)
+	{
+		int nw = icon.getIconWidth();
+		int nh = icon.getIconHeight();
+
+		if(icon.getIconWidth() > w)
+		{
+			nw = w;
+			nh = (nw * icon.getIconHeight()) / icon.getIconWidth();
+		}
+
+		if(nh > h)
+		{
+			nh = h;
+			nw = (icon.getIconWidth() * nh) / icon.getIconHeight();
+		}
+
+		return new ImageIcon(icon.getImage().getScaledInstance(nw, nh, Image.SCALE_DEFAULT));
 	}
 }
