@@ -29,7 +29,7 @@ import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
 import matlabtest.getWheeze;
-import matlabtest.wheezePopUp;
+import matlabtest.wheezePopUpUnhealthy;
 import sun.awt.image.ToolkitImage;
 
 import javax.swing.JTabbedPane;
@@ -557,7 +557,7 @@ public class GUI {
 		panel_AudioAnalysis.add(btnNewButton_1);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				wheezePopUp wheezepopUp=new wheezePopUp();
+				wheezePopUpUnhealthy wheezepopUp=new wheezePopUpUnhealthy();
 				try {
 					wheezepopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, delta_t, Nf);
 				} catch (IOException e1) {

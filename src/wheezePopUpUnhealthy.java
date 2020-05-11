@@ -60,7 +60,7 @@ import java.io.IOException;
 import de.erichseifert.gral.graphics.Drawable;
 import de.erichseifert.gral.graphics.Insets2D;
 
-public class wheezePopUp {
+public class wheezePopUpUnhealthy {
 	
 	private static JFrame wheezeFrame;
 	
@@ -112,13 +112,13 @@ public class wheezePopUp {
 		JLabel DiagnosticTxtBox = new JLabel(state);
 		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		DiagnosticTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
-		DiagnosticTxtBox.setBounds(553, 257, 97, 40);
+		DiagnosticTxtBox.setBounds(553, 271, 97, 40);
 		wheezeFrame.getContentPane().add(DiagnosticTxtBox);
 		
 		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(444, 39, 185, 34);
+		lblNewLabel_2.setBounds(444, 39, 185, 27);
 		wheezeFrame.getContentPane().add(lblNewLabel_2);
 		
 		JLabel wheezingIntTxtBox = new JLabel("");
@@ -128,7 +128,7 @@ public class wheezePopUp {
 		wheezeFrame.getContentPane().add(wheezingIntTxtBox);
 		
 		
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++PLOTS++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PLOTS++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
 		//Organizar dados do sinal audio raw
 		DataTable audioData = new DataTable(Double.class, Double.class);
@@ -140,6 +140,8 @@ public class wheezePopUp {
 			audioData.add(time[i],normalized_x);
 		}
 		
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++WHEEZE ACTIVITY++++++++++++++++++++++++++++++++++++++++++
+		
 		//Organize wheeze activity data
 		DataTable wheezeData = new DataTable(Double.class, Double.class);
 		
@@ -148,7 +150,7 @@ public class wheezePopUp {
 		}
 		
 		//Create plot data
-		DataSource audioSource=new DataSeries("Envelope",audioData);
+		DataSource audioSource=new DataSeries("Audio",audioData);
 		DataSource wheezeSource=new DataSeries("Wheeze",wheezeData);
 		XYPlot wheezeActivityPlot = new XYPlot(audioSource,wheezeSource);
 		wheezeActivityPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
@@ -171,7 +173,7 @@ public class wheezePopUp {
 		//Add space for labels 
 		double insetsTop = 10.0,
 			   insetsLeft = 50.0, //to fit ticks and values
-			   insetsBottom = 50.0, //to fit ticks and values
+			   insetsBottom = 30.0, //to fit ticks and values
 			   insetsRight = 120.0;
 		wheezeActivityPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
 
@@ -181,9 +183,10 @@ public class wheezePopUp {
 		wheezeActivityPlot.getLegend().setBorderColor(new Color(255,255,255));
 		//Definição do painel onde ficará o sinal audio
 		InteractivePanel wheezeActivityPanel = new InteractivePanel(wheezeActivityPlot);
-		wheezeActivityPanel.setBounds(10, 228, 500, 146);
+		wheezeActivityPanel.setBounds(10, 277, 500, 108);
 		wheezeActivityPanel.setBackground(Color.WHITE);
 		wheezeFrame.getContentPane().add(wheezeActivityPanel);
+		wheezeActivityPanel.setLayout(null);
 		
 		
 		//Lines and points config
@@ -205,52 +208,107 @@ public class wheezePopUp {
 		wheezeActivityPlot.setPointRenderers(wheezeSource, wheezePoints);
 		
 		
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PLOT WHEEZE SPECTRUM+++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PLOT SIGNAL SPECTRUM+++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
 		DataTable dummyData = new DataTable(Double.class, Double.class);
 		
 		//This is data that just allows to create the plot whose background will be the image we want
 		dummyData.add(0.0,0.0);
-		XYPlot spectrumPlot = new XYPlot(dummyData);
+		XYPlot dummyPlot = new XYPlot(dummyData);
+		
 		
 		PointRenderer dummyPoints = new DefaultPointRenderer2D(); dummyPoints.setShape(null);
 		LineRenderer dummyLines=new SmoothLineRenderer2D(); dummyLines.setColor(new Color(0,0,0,0));
-		spectrumPlot.setPointRenderers(dummyData, dummyPoints);
-		spectrumPlot.setLineRenderers(dummyData, dummyLines);
+		dummyPlot.setPointRenderers(dummyData, dummyPoints);
+		dummyPlot.setLineRenderers(dummyData, dummyLines);
 		
-		//Try to get spectrum image from the path gotten as a parameter (has a throw to IO error)
-		JLabel specImgLabel = new JLabel("");
-		specImgLabel.setBounds(60, 64, 330, 86);
-		wheezeFrame.getContentPane().add(specImgLabel);
-		BufferedImage img = ImageIO.read(new File(normSpectrumPath));
-		Image resizedImg=img.getScaledInstance(specImgLabel.getWidth(),specImgLabel.getHeight(),Image.SCALE_SMOOTH);
-		ImageIcon testImg=new ImageIcon(resizedImg);
-		specImgLabel.setIcon(testImg);
 		
 		//Config axis and labels
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Frequency"));
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).getLabel().setRotation(90);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelDistance(0.2);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickLabelDistance(0.1);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLength(0.2);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelsOutside(true);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setLabelDistance(0.1);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_X).setIntersection(-Double.MAX_VALUE);
-		spectrumPlot.getAxisRenderer(XYPlot.AXIS_Y).setMinorTicksVisible(false);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Frequency"));
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_Y).getLabel().setRotation(90);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelDistance(0.2);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_Y).setTickLabelDistance(0.1);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLength(0.2);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setTickLabelsOutside(true);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setLabelDistance(0.1);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_X).setIntersection(-Double.MAX_VALUE);
+		dummyPlot.getAxisRenderer(XYPlot.AXIS_Y).setMinorTicksVisible(false);
 		
-		spectrumPlot.getAxis(XYPlot.AXIS_Y).setMax(1000);
-		spectrumPlot.getAxis(XYPlot.AXIS_X).setMax(10);
+		dummyPlot.getAxis(XYPlot.AXIS_Y).setMax(1001);
+		dummyPlot.getAxis(XYPlot.AXIS_X).setMax(10.1);
 		
 		//Set insets for labels
-		spectrumPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
+		dummyPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
+		
 		
 		//Set panel with the plot
-		InteractivePanel spectrumPanel = new InteractivePanel(spectrumPlot);
-		spectrumPanel.setBounds((int) (specImgLabel.getX()-insetsLeft), (int) (specImgLabel.getY()-insetsTop), (int)(specImgLabel.getWidth()+insetsLeft+insetsRight), (int)(specImgLabel.getHeight()+insetsTop+insetsBottom));
-		spectrumPanel.setBackground(Color.white);
+		InteractivePanel spectrumPanel = new InteractivePanel(dummyPlot);
+		spectrumPanel.setBounds(10, 28, 500, 108);
+		spectrumPanel.setBackground(Color.WHITE);
+		spectrumPanel.setLayout(null);
+		
+		//Try to get spectrum image from the path gotten as a parameter (has a throw to IO error) and place it in the plot area
+		double spectrumLblWidth=spectrumPanel.getWidth();
+		double spectrumLblHeight=spectrumPanel.getHeight();
+		double spectrumLblX=spectrumPanel.getX();
+		double spectrumLblY=spectrumPanel.getY();
+		
+		JLabel specImgLabel = new JLabel("");
+		specImgLabel.setBounds((int) (spectrumLblX+insetsLeft), (int) (spectrumLblY+insetsTop),(int) (spectrumLblWidth-insetsLeft-insetsRight), (int) (spectrumLblHeight-insetsTop-insetsBottom)); //now the label as the same size as the plot area and the labels are visible
+		wheezeFrame.getContentPane().add(specImgLabel);
+		
+		BufferedImage img = ImageIO.read(new File(normSpectrumPath));
+		Image resizedImg=img.getScaledInstance(specImgLabel.getWidth(),specImgLabel.getHeight(),Image.SCALE_SMOOTH);
+		ImageIcon spectrumImg=new ImageIcon(resizedImg);
+		specImgLabel.setIcon(spectrumImg);
+	
 		wheezeFrame.getContentPane().add(spectrumPanel);
 		
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++WHEEZING SPECTRUM++++++++++++++++++++++++++++++++++++++++++++++++++++
+		XYPlot dummyPlot2=dummyPlot;
+		
+		
+		InteractivePanel wheezeSpectrumPanel = new InteractivePanel(dummyPlot2);
+		wheezeSpectrumPanel.setBounds(10, 155, 500, 108);
+		wheezeSpectrumPanel.setBackground(Color.WHITE);
+		
+		double wheezeLblWidth=wheezeSpectrumPanel.getWidth();
+		double wheezeLblHeight=wheezeSpectrumPanel.getHeight();
+		double wheezeLblX=wheezeSpectrumPanel.getX();
+		double wheezeLblY=wheezeSpectrumPanel.getY();
+		
+		JLabel wheezeSpectrumLbl = new JLabel("");
+		wheezeSpectrumLbl.setBounds((int) (wheezeLblX+insetsLeft),(int) (wheezeLblY+insetsTop),(int) (wheezeLblWidth-insetsLeft-insetsRight),(int) (wheezeLblHeight-insetsTop-insetsBottom));
+		wheezeFrame.getContentPane().add(wheezeSpectrumLbl);
+		
+		BufferedImage wheezeImg = ImageIO.read(new File(wheezeSpectrumPath));
+		Image resizedWheezeImg=wheezeImg.getScaledInstance(wheezeSpectrumLbl.getWidth(),wheezeSpectrumLbl.getHeight(),Image.SCALE_SMOOTH);
+		ImageIcon wheezeSpectrumImg=new ImageIcon(resizedWheezeImg);
+		wheezeSpectrumLbl.setIcon(wheezeSpectrumImg);
+		
+		wheezeFrame.getContentPane().add(wheezeSpectrumPanel);
+		wheezeSpectrumPanel.setLayout(null);
+		
+		JLabel lblNewLabel_1 = new JLabel("Audio Signal Spectrum");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setBounds(135, 11, 161, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Wheeze Activity Spectrum");
+		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel_1_1.setBounds(135, 140, 185, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1_1);
+		
+		JLabel lblNewLabel_1_1_1 = new JLabel("Wheeze Activity");
+		lblNewLabel_1_1_1.setBounds(135, 262, 185, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1_1_1);
+		lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 		wheezeFrame.setVisible(true);
 	}
@@ -284,5 +342,4 @@ public class wheezePopUp {
 		    g2d.dispose();
 		    return img;
 		}
-	  
 }

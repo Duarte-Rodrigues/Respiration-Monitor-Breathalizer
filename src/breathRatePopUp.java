@@ -45,6 +45,7 @@ import java.awt.Color;
 import javax.swing.SwingConstants;
 import java.awt.SystemColor;
 import java.awt.geom.*;
+import java.awt.FlowLayout;
 
 public class breathRatePopUp {
 	
@@ -175,12 +176,8 @@ public class breathRatePopUp {
 		Number max=audioPlot.getAxis(XYPlot.AXIS_Y).getMax();
 		audioPlot.getAxis(XYPlot.AXIS_Y).setMax((double)max+0.10*(double)max);
 		
-		//Title
-		audioPlot.getTitle().setText("Audio Signal");
-		audioPlot.getTitle().setFont(new Font("Tahoma", Font.BOLD, 16));
-		
 		//Add space for labels 
-		double insetsTop = 20.0,
+		double insetsTop = 0.0,
 			   insetsLeft = 50.0, //to fit ticks and values
 			   insetsBottom = 50.0, //to fit ticks and values
 			   insetsRight = 120.0;
@@ -188,7 +185,7 @@ public class breathRatePopUp {
 		
 		//Definição do painel onde ficará o sinal audio
 		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
-		audioPlotPanel.setBounds(10, 21, 467, 174);
+		audioPlotPanel.setBounds(10, 42, 467, 153);
 		audioPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(audioPlotPanel);
 		
@@ -239,9 +236,7 @@ public class breathRatePopUp {
 		DataSource softSource=new DataSeries("Soft",softData);
 		
 		XYPlot envPlot = new XYPlot(envSource,hardSource,softSource,mildSource);
-		envPlot.getTitle().setText("Envelope");
-		envPlot.getTitle().setFont(new Font("Tahoma", Font.BOLD, 16));
-		
+
 		//Config Axis
 		envPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
 		envPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Intensity"));
@@ -274,16 +269,18 @@ public class breathRatePopUp {
 		//envLegend.setBackground(Color.WHITE);
 		//Create panel for plot
 		DrawablePanel envPlotPanel = new DrawablePanel(envPlot);
-		envPlotPanel.setBounds(10, 200, 467, 174);
+		envPlotPanel.setBounds(10, 232, 467, 153);
 		envPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(envPlotPanel);
-		envPlotPanel.setLayout(null);
+		envPlotPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		
 		//Lines and points config for envelope line
-		lines.setColor(blue); points.setColor(blue);
-		lines.setStroke(new BasicStroke(1)); points.setShape(null);
-		envPlot.setLineRenderers(envSource, lines);
+		LineRenderer envLines = new SmoothLineRenderer2D();
+		envLines.setColor(blue); points.setColor(blue);
+		envLines.setStroke(new BasicStroke(1)); 
+		
+		envPlot.setLineRenderers(envSource, envLines);
 		envPlot.setPointRenderers(envSource, points);
 		
 		//Mark hard, mild, soft breath points
@@ -310,6 +307,18 @@ public class breathRatePopUp {
 		mildTxt.setText(String.valueOf(numberOfMildBreahts));
 		totalTxt.setText(String.valueOf(totalBreaths));
 		breathingRateTxt.setText(String.valueOf((int)bpm)+" bpm");
+		
+		JLabel audioPlotTitle = new JLabel("Audio Signal");
+		audioPlotTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		audioPlotTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
+		audioPlotTitle.setBounds(157, 11, 97, 22);
+		breathRateFrame.getContentPane().add(audioPlotTitle);
+		
+		JLabel envPlotTitle = new JLabel("Envelope");
+		envPlotTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		envPlotTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
+		envPlotTitle.setBounds(157, 199, 97, 22);
+		breathRateFrame.getContentPane().add(envPlotTitle);
 		
 		breathRateFrame.setVisible(true);
 	}
