@@ -80,5 +80,16 @@
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/wizard.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/xml.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/gral-core-0.11.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/jfreechart-1.0.19-experimental.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/jfreechart-1.0.19-swt.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/jfreesvg-2.0.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/orsoncharts-1.4-eval-nofx.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/orsonpdf-1.6-eval.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/servlet.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/swtgraphics2d.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,5 +1,3 @@
-
-
 import java.awt.EventQueue;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
@@ -60,7 +58,7 @@ public class breathRatePopUp {
 		breathRateFrame = new JFrame();
 		breathRateFrame.setTitle("Breathing Rate Analysis");
 		breathRateFrame.setBounds(100, 100, 732, 424);
-		breathRateFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		breathRateFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		breathRateFrame.getContentPane().setLayout(null);
 		
 		JLabel lblBreathingRate = new JLabel("Breathing Rate");
@@ -146,8 +144,6 @@ public class breathRatePopUp {
 		
 		//Organizar dados do sinal audio raw
 		DataTable audioData = new DataTable(Double.class, Double.class);
-		
-		
 
 		double[] time= new double[audioWav.length];
 		for(int i=0; i<time.length;i++) {
@@ -228,7 +224,7 @@ public class breathRatePopUp {
 			mildData.add(mild[k][1],(mild[k][0]));
 		}
 		
-		//Create plot data~
+		//Create plot data
 		//We could've used envData to form the plot; but DataSource variables allow better-looking legends
 		DataSource envSource=new DataSeries("Envelope",envData);
 		DataSource hardSource=new DataSeries("Hard",hardData);

@@ -16,7 +16,7 @@ public class getWheeze {
 	
 	public getWheeze(String filename,MatlabEngine eng) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
 		
-		eng.eval("[x state fs normSpectrum wheezeSpectrum delta_t nf]=wheezeDetect('C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Matlab\\A_rale_bronchial.wav');");
+		eng.eval("[x state fs normSpectrum wheezeSpectrum delta_t nf]=wheezeDetect('"+filename+"');");
 		
 	    x=eng.getVariable("x");
 	    state=eng.getVariable("state");

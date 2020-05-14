@@ -1,11 +1,10 @@
-
-
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,6 +16,8 @@ import com.mathworks.engine.MatlabEngine;
 import com.mathworks.engine.MatlabExecutionException;
 import com.mathworks.engine.MatlabSyntaxException;
 
+
+import de.erichseifert.gral.data.DataSource;
 import de.erichseifert.gral.data.DataTable;
 import de.erichseifert.gral.graphics.AbstractDrawable;
 import de.erichseifert.gral.graphics.Label;
@@ -28,8 +29,6 @@ import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
-import matlabtest.getWheeze;
-import matlabtest.wheezePopUpUnhealthy;
 import sun.awt.image.ToolkitImage;
 
 import javax.swing.JTabbedPane;
@@ -40,6 +39,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
@@ -52,6 +52,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Paint;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
@@ -60,6 +61,13 @@ import java.awt.TextField;
 import java.awt.Window;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.jfree.data.time.DynamicTimeSeriesCollection;
+import org.jfree.data.time.FixedMillisecond;
+import org.jfree.data.time.Second;
+
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
 import java.awt.image.BufferedImage;
@@ -70,6 +78,7 @@ import java.nio.file.Paths;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import java.awt.SystemColor;
@@ -96,12 +105,14 @@ public class GUI {
 	 * @throws IOException 
 	 * @throws UnsupportedAudioFileException 
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException, UnsupportedAudioFileException, IOException, LineUnavailableException {
 
 		//------------------------------------------GET FILTERED AUDIO AND INTENSITY MATLAB DATA-------------------------------
 		
 		MatlabEngine eng=MatlabEngine.startMatlab();
-		String filename=new String("C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav");
+		//C:\\Users\\A541\\OneDrive - Universidade do Porto\\MIB\\3ºAno\\2º semestre\\LIEB\\Projeto\\Compiled breath audios\\Vesicular breath sound\\A_rale_vesicular.wav
+		String filename=new String("C:\\Users\\dtrdu\\Desktop\\Duarte\\audio_wav\\1.Bronchial_breath_souds_(normal).wav");
 		
 
 		//---------------------------------------------------------------------------------------------------------------
@@ -130,10 +141,11 @@ public class GUI {
 
 		ImportBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				//https://stackoverflow.com/questions/2282211/windows-look-and-feel-for-jfilechooser
 				JFileChooser chooser = new JFileChooser();
-				String choosertitle ="Dialog";
-				chooser.setCurrentDirectory(new java.io.File("C:\\Users\\dtrdu\\Desktop"));
+				
+				String choosertitle ="Select Patient Folder";
+				chooser.setCurrentDirectory(new java.io.File("C:\\Users\\dtrdu\\Desktop"));//\\Desktop
 				chooser.setDialogTitle(choosertitle);
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				chooser.setAcceptAllFileFilterUsed(true);
@@ -262,7 +274,7 @@ public class GUI {
 //					String writeBack="";
 //					if (newinfo.getText()!=" ") {
 //						writeBack =  newinfo.getText();
-//
+//						REVER DADO QUE FOI ALTEARDO QUANDO FOI POSTO O SCROLL... UAR O FILEWRITER TALEVZ
 //						String lineToRemove = information.get(6);
 //						String currentLine;
 //
@@ -324,6 +336,23 @@ public class GUI {
 		JPanel panel_AudioSelect = new JPanel();
 		tabbedPane.addTab("Audio Selection", null, panel_AudioSelect, null);
 		
+		JButton btnSelectAudio = new JButton("Select");
+		btnSelectAudio.setBounds(390, 10, 90, 23);
+		btnSelectAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//sempre que se seleciona meter o botao play vissible e esconder o botao resume
+			}
+			
+		});
+		panel_AudioSelect.setLayout(null);
+
+		
+		JComboBox<String> audioChoice = new JComboBox<>();
+		audioChoice.setBounds(28, 15, 151, 23);
+		panel_AudioSelect.add(btnSelectAudio);
+		panel_AudioSelect.add(audioChoice);
+		//---------------------------------------------------------------------------------------------------------------------------------
+		
 		//+++++++++++++++++++++++++++++++GET MATLAB AUDIO PLOT DATA++++++++++++++++++++++++++++++++++++++++++++
 		String pathAud= filename;
 		getAudioPlot Audplot = new getAudioPlot(pathAud,eng);
@@ -332,15 +361,19 @@ public class GUI {
 		double FS=Audplot.getFS();
 		//++++++++++++++++++++++++++++++++PLOT AUDIO SIGNAL++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-		
+		AudioPlayer audioSel= new AudioPlayer(pathAud);
 		DataTable audioData = new DataTable(Double.class, Double.class);
+		
+
 		//Conversão para tempo
 		double[] time= new double[wavefrm.length];
+		
 		for(int i=0; i<time.length;i++) {
 			time[i]=i/FS;
 			audioData.add(time[i],wavefrm[i]);
 		}
-
+		
+		
 		XYPlot audioPlot = new XYPlot(audioData);
 
 		//Definição do painel onde ficará o sinal audio
@@ -348,6 +381,7 @@ public class GUI {
 		audioPlotPanel.setBounds(28, 73, 452, 121);
 		audioPlotPanel.setBackground(Color.WHITE);
 		panel_AudioSelect.add(audioPlotPanel);
+		
 		//Lines and points config
 		LineRenderer lines = new SmoothLineRenderer2D();
 		PointRenderer points = new DefaultPointRenderer2D();
@@ -356,27 +390,20 @@ public class GUI {
 		lines.setStroke(new BasicStroke(1)); points.setShape(null);
 		audioPlot.setLineRenderers(audioData, lines);
 		audioPlot.setPointRenderers(audioData, points);
-
-		//++++++++++++++++++++++++++++++++++++++++++++++++++++END OF AUDIO SIGNAL PLOT+++++++++++++++++++++++++++++++++++++++++++++
-				
 		
-		JButton btnSelectAudio = new JButton("Select");
-		btnSelectAudio.setBounds(390, 10, 90, 23);
-		btnSelectAudio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-			
-		});
-		panel_AudioSelect.setLayout(null);
-
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++Audio Player Specs+++++++++++++++++++++++++++++++++++++++++++++
+		//Slider to accompany the audio progression
+		JLabel currentDuration = new JLabel ("0");
+		currentDuration.setBounds(7, 54, 25,14);
+		JSlider slider = new JSlider(0, 100);
+		slider.setValue(0);
+		slider.setBounds(23, 49, 462,23);
+		audioSel.AudioSlider(slider,currentDuration);//influencia só como o slider atua
+		panel_AudioSelect.add(slider);
+		panel_AudioSelect.add(currentDuration);
 		
-		JComboBox<String> audioChoice = new JComboBox<>();
-		audioChoice.setBounds(80, 10, 151, 23);
-		panel_AudioSelect.add(btnSelectAudio);
-		panel_AudioSelect.add(audioChoice);
 		
-		AudioPlayer audioSel= new AudioPlayer(pathAud);
+		
 		
 		
 		JButton btnResumeAudio = new JButton("Resume");
@@ -386,7 +413,6 @@ public class GUI {
 				try {
 					audioSel.resume();
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-					
 					e1.printStackTrace();
 				}
 			}
@@ -420,8 +446,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					audioSel.restart();
-				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e1) {
-					
+				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e1) {					
 					e1.printStackTrace();
 				}
 			}
@@ -429,8 +454,32 @@ public class GUI {
 		});
 		btnRestartAudio.setBounds(201, 239, 77, 23);
 		panel_AudioSelect.add(btnRestartAudio);
-
 		
+		JTextField  GotoIndex = new JTextField(10);
+		GotoIndex.setBounds(385, 240, 66, 22);
+		panel_AudioSelect.add(GotoIndex);
+		GotoIndex.setColumns(10);
+
+		JButton btnNewButton_2 = new JButton("Go to");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String ind = GotoIndex.getText();
+				double timeInd = (Double.parseDouble(ind));
+				long index = (long)timeInd*1000000;
+				try {
+					audioSel.jump(index);
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_2.setBounds(296, 239, 79, 23);
+		panel_AudioSelect.add(btnNewButton_2);
+		
+		
+		JLabel lblNewLabel = new JLabel("sec.");
+		lblNewLabel.setBounds(461, 243, 26, 14);
+		panel_AudioSelect.add(lblNewLabel);
 
 		JTextPane txtpnDfdbnntdf = new JTextPane();		
 		JLabel lblNewLabel_7 = new JLabel("Time (s)");
@@ -441,43 +490,23 @@ public class GUI {
 		JLabel lblNewLabel_8 = new JLabel("Audio Signal");
 		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel_8.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_8.setBounds(201, 44, 110, 28);
+		lblNewLabel_8.setBounds(185, 15, 110, 28);
 		panel_AudioSelect.add(lblNewLabel_8);
 		
-		JTextField  GotoIndex = new JTextField(10);
-		GotoIndex.setBounds(385, 240, 66, 20);
-		panel_AudioSelect.add(GotoIndex);
-		GotoIndex.setColumns(10);
-		
-		
-		JButton btnNewButton_2 = new JButton("Go to");
-		btnNewButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				String ind = GotoIndex.getText();
-				double timeInd = (Double.parseDouble(ind));
-				long index = (long)timeInd*1000000;
-				try {
-					audioSel.jump(index);
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-					
-					e.printStackTrace();
-				}
+		JButton btnNewButton_3 = new JButton("Take Note");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String decTime = audioSel.getStrSecond();
+				AnnotationPopUp note =new AnnotationPopUp(decTime,pathAud);
 			}
 		});
-		btnNewButton_2.setBounds(296, 239, 79, 23);
-		panel_AudioSelect.add(btnNewButton_2);
-		
-		
-		JLabel lblNewLabel = new JLabel("sec.");
-		lblNewLabel.setBounds(461, 243, 46, 14);
-		panel_AudioSelect.add(lblNewLabel);
-		
-		JButton btnNewButton_3 = new JButton("Take Note");
+
 		btnNewButton_3.setBounds(385, 205, 95, 23);
 		panel_AudioSelect.add(btnNewButton_3);
 		
 		
-		//-----------------------AUDIO ANALYSIS-------------------------------------
+		
+		//-----------------------AUDIO ANALYSIS-------------------------------------------------------
 		JPanel panel_AudioAnalysis = new JPanel();
 		tabbedPane.addTab("Audio Analysis", null, panel_AudioAnalysis, null);
 		panel_AudioAnalysis.setLayout(null);
@@ -542,7 +571,7 @@ public class GUI {
 		btnNewButton.setBounds(58, 68, 144, 23);
 		panel_AudioAnalysis.add(btnNewButton);
 		
-		//++++++++++++++GET WHEEZING DATA+++++++++++++++++
+		//+++++++++++++++++++++++++++++++++++++GET WHEEZING DATA++++++++++++++++++++++++++++++++++++++++++++++++
 		getWheeze wheeze=new getWheeze(filename,eng);
 		double[] x=wheeze.getX();
 		String state=wheeze.getState();
@@ -561,7 +590,6 @@ public class GUI {
 				try {
 					wheezepopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, delta_t, Nf);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

@@ -100,7 +100,7 @@ public class wheezePopUpHealthy {
 		wheezeFrame = new JFrame();
 		wheezeFrame.setTitle("Wheeze Analysis");
 		wheezeFrame.setBounds(100, 100, 706, 424);
-		wheezeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		wheezeFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		wheezeFrame.getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Diagnostic");
