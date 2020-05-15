@@ -1,7 +1,10 @@
 
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -59,6 +62,8 @@ import java.io.IOException;
 
 import de.erichseifert.gral.graphics.Drawable;
 import de.erichseifert.gral.graphics.Insets2D;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 
 public class wheezePopUpUnhealthy {
 	
@@ -94,7 +99,7 @@ public class wheezePopUpUnhealthy {
 	 * @throws IOException 
 	 * @wbp.parser.entryPoint
 	 */
-	public void openPopUp(double[] x, String state, double fs, String normSpectrumPath, String wheezeSpectrumPath,double[] delta_t,double nf) throws IOException {
+	public void openPopUp(double[] x, String state, double fs, String normSpectrumPath, String wheezeSpectrumPath,double[] wheezeActivity) throws IOException {
 	
 		
 		wheezeFrame = new JFrame();
@@ -106,11 +111,11 @@ public class wheezePopUpUnhealthy {
 		JLabel lblNewLabel = new JLabel("Diagnostic");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(553, 211, 97, 34);
+		lblNewLabel.setBounds(553, 210, 97, 34);
 		wheezeFrame.getContentPane().add(lblNewLabel);
 		
 		JLabel DiagnosticTxtBox = new JLabel(state);
-		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.BOLD, 15));
 		DiagnosticTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
 		DiagnosticTxtBox.setBounds(553, 271, 97, 40);
 		wheezeFrame.getContentPane().add(DiagnosticTxtBox);
@@ -118,15 +123,36 @@ public class wheezePopUpUnhealthy {
 		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(444, 39, 185, 27);
+		lblNewLabel_2.setBounds(454, 38, 185, 27);
 		wheezeFrame.getContentPane().add(lblNewLabel_2);
 		
 		JLabel wheezingIntTxtBox = new JLabel("");
 		wheezingIntTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
 		wheezingIntTxtBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		wheezingIntTxtBox.setBounds(454, 84, 185, 116);
-		wheezeFrame.getContentPane().add(wheezingIntTxtBox);
+		wheezingIntTxtBox.setBounds(454, 65, 185, 116);
 		
+		
+		JLabel lblNewLabel_1 = new JLabel("Audio Signal Spectrum");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setBounds(135, 11, 161, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Wheeze Activity Spectrum");
+		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel_1_1.setBounds(135, 140, 185, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1_1);
+		
+		JLabel lblNewLabel_1_1_1 = new JLabel("Wheeze Activity");
+		lblNewLabel_1_1_1.setBounds(135, 262, 185, 21);
+		wheezeFrame.getContentPane().add(lblNewLabel_1_1_1);
+		lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		
+		JScrollPane scroller = new JScrollPane(wheezingIntTxtBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroller.setBounds(454, 65, 185, 116);
+		wheezeFrame.getContentPane().add(scroller);
 		
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PLOTS++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
@@ -145,8 +171,8 @@ public class wheezePopUpUnhealthy {
 		//Organize wheeze activity data
 		DataTable wheezeData = new DataTable(Double.class, Double.class);
 		
-		for(int i=0; i<delta_t.length;i++) {
-			wheezeData.add(time[i],delta_t[i]);
+		for(int i=0; i<wheezeActivity.length;i++) {
+			wheezeData.add(time[i],wheezeActivity[i]);
 		}
 		
 		//Create plot data
@@ -289,27 +315,21 @@ public class wheezePopUpUnhealthy {
 		
 		wheezeFrame.getContentPane().add(wheezeSpectrumPanel);
 		wheezeSpectrumPanel.setLayout(null);
-		
-		JLabel lblNewLabel_1 = new JLabel("Audio Signal Spectrum");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(135, 11, 161, 21);
-		wheezeFrame.getContentPane().add(lblNewLabel_1);
-		
-		JLabel lblNewLabel_1_1 = new JLabel("Wheeze Activity Spectrum");
-		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_1_1.setBounds(135, 140, 185, 21);
-		wheezeFrame.getContentPane().add(lblNewLabel_1_1);
-		
-		JLabel lblNewLabel_1_1_1 = new JLabel("Wheeze Activity");
-		lblNewLabel_1_1_1.setBounds(135, 262, 185, 21);
-		wheezeFrame.getContentPane().add(lblNewLabel_1_1_1);
-		lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		
+	
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+		
+		//Get wheezing intervals in text:
+		
+		List<int[]> intervals =intervals(wheezeActivity);
+		String text="";
+		for(int i=0; i<intervals.size();i++){
+			
+			int[]interval=intervals.get(i);
+			text=text + String.format("%.2f",(interval[0]/fs)) + " s " + " - " + String.format("%.2f",(interval[1]/fs))+ " s " + "<br>"; //This basically creates a text like 1.2 s - 1.4 s (newline) 3.4-3.7 s
+		}
+		text="<html>"+text+"<html>";
+		wheezingIntTxtBox.setText(text);
+		
 		wheezeFrame.setVisible(true);
 	}
 	
@@ -335,11 +355,25 @@ public class wheezePopUpUnhealthy {
 	      return min;
 	   }
 	  
-	  private static BufferedImage convert(BufferedImage src, int bufImgType) {
-		    BufferedImage img= new BufferedImage(src.getWidth(), src.getHeight(), bufImgType);
-		    Graphics2D g2d= img.createGraphics();
-		    g2d.drawImage(src, 0, 0, null);
-		    g2d.dispose();
-		    return img;
-		}
+	  private List<int[]> intervals(double[] a){
+		  //List of double arrays will store in each row an interval (in samples) where the wheeze is present. First element is the start
+		  //second element is the end of the wheeziing activity
+		  List<int[]> intervals = new ArrayList<int[]>();
+		  int start = 0;
+		  for(int i=0; i<a.length-1; i++) {
+			  //Start of the Wheeze
+			  if (a[i]==0.0 && a[i+1]==1.0) {
+				  start=i;
+				  continue;
+			  }
+			  //End of Wheeze
+			  else if(a[i]==1.0 && a[i+1]==0.0) {
+				  intervals.add(new int[] {start,i});
+			  }
+			  
+		  }
+		  
+		  
+		  return intervals;
+	  }
 }

@@ -29,6 +29,9 @@ import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
+import matlabtest.getWheeze;
+import matlabtest.wheezePopUpHealthy;
+import matlabtest.wheezePopUpUnhealthy;
 import sun.awt.image.ToolkitImage;
 
 import javax.swing.JTabbedPane;
@@ -578,24 +581,33 @@ public class GUI {
 		double fs1=wheeze.getFs();
 		String normSpectrumPath=wheeze.getNormSpectrumPath();
 		String wheezeSpectrumPath=wheeze.getWheezeSpectrumPath();
-		double[] delta_t=wheeze.getDelta_t();
-		double Nf= wheeze.getNf();
+		double[] wheezeActivity=wheeze.getWheezeActivity();
 		
 		JButton btnNewButton_1 = new JButton("Wheeze Detection");
 		btnNewButton_1.setBounds(321, 68, 151, 23);
 		panel_AudioAnalysis.add(btnNewButton_1);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				wheezePopUpUnhealthy wheezepopUp=new wheezePopUpUnhealthy();
-				try {
-					wheezepopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, delta_t, Nf);
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				if (state.equals("Unhealthy")) {
+					wheezePopUpUnhealthy unhealthyPopUp=new wheezePopUpUnhealthy();
+					try {
+						unhealthyPopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, wheezeActivity);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				else if(state.equals("Healthy")) {
+					wheezePopUpHealthy healthyPopUp=new wheezePopUpHealthy();
+					try {
+						healthyPopUp.openPopUp(x,state, fs1, normSpectrumPath);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
-		
-		frmRespiratorySoundAnalysis.setVisible(true);
 		
 		eng.close();
 	}

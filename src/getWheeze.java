@@ -16,15 +16,14 @@ public class getWheeze {
 	
 	public getWheeze(String filename,MatlabEngine eng) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException {
 		
-		eng.eval("[x state fs normSpectrum wheezeSpectrum delta_t nf]=wheezeDetect('"+filename+"');");
+		eng.eval("[x state fs normSpectrum wheezeSpectrum wheezeAct]=wheezeDetect('"+filename+"');");
 		
 	    x=eng.getVariable("x");
 	    state=eng.getVariable("state");
 	    fs=eng.getVariable("fs");
 	    normSpectrumPath=eng.getVariable("normSpectrum");
 	    wheezeSpectrumPath=eng.getVariable("wheezeSpectrum");
-	    delta_t=eng.getVariable("delta_t");
-	    nf=eng.getVariable("nf");
+	    wheezeActivity=eng.getVariable("wheezeAct");
 	    
 	}
 	
@@ -44,12 +43,8 @@ public class getWheeze {
 		return wheezeSpectrumPath;
 	}
 
-	public double[] getDelta_t() {
-		return delta_t;
-	}
-
-	public double getNf() {
-		return nf;
+	public double[] getWheezeActivity() {
+		return wheezeActivity;
 	}
 
 	public String getState() {
@@ -61,6 +56,5 @@ public class getWheeze {
 	private double fs;
 	private String normSpectrumPath;
 	private String wheezeSpectrumPath;
-	private double[] delta_t;
-	private double nf;
+	private double[] wheezeActivity;
 }

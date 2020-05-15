@@ -106,13 +106,13 @@ public class wheezePopUpHealthy {
 		JLabel lblNewLabel = new JLabel("Diagnostic");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(553, 194, 97, 34);
+		lblNewLabel.setBounds(508, 204, 97, 34);
 		wheezeFrame.getContentPane().add(lblNewLabel);
 		
 		JLabel DiagnosticTxtBox = new JLabel(state);
-		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.BOLD, 15));
 		DiagnosticTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
-		DiagnosticTxtBox.setBounds(553, 228, 97, 40);
+		DiagnosticTxtBox.setBounds(508, 237, 97, 40);
 		wheezeFrame.getContentPane().add(DiagnosticTxtBox);
 		
 		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
@@ -196,41 +196,11 @@ public class wheezePopUpHealthy {
 		JLabel lblNewLabel_1 = new JLabel("Audio Signal Spectrum");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(134, 10, 161, 21);
+		lblNewLabel_1.setBounds(160, 11, 161, 21);
 		wheezeFrame.getContentPane().add(lblNewLabel_1);
 		
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 		wheezeFrame.setVisible(true);
 	}
-	
-	  private double max(double [] array) {
-	      double max = 0;
-	     
-	      for(int i=0; i<array.length; i++ ) {
-	         if(array[i]>max) {
-	            max = array[i];
-	         }
-	      }
-	      return max;
-	   }
-	  
-	  private double min(double [] array) {
-	      double min = 0;
-	     
-	      for(int i=0; i<array.length; i++ ) {
-	         if(array[i]<min) {
-	            min = array[i];
-	         }
-	      }
-	      return min;
-	   }
-	  
-	  private static BufferedImage convert(BufferedImage src, int bufImgType) {
-		    BufferedImage img= new BufferedImage(src.getWidth(), src.getHeight(), bufImgType);
-		    Graphics2D g2d= img.createGraphics();
-		    g2d.drawImage(src, 0, 0, null);
-		    g2d.dispose();
-		    return img;
-		}
 }
