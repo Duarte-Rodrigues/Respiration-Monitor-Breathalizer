@@ -51,7 +51,7 @@ public class AnnotationPopUp {
 				if (newNote.getText()!=" ") {
 					String rootpath = path.substring(0,barInd);
 					String newNotefolder=rootpath+"\\Annotations";
-					String newfilepath=newNotefolder+"\\"+audioName+"_"+time+".txt";
+					String newfilepath=newNotefolder+"\\"+audioName+"_"+time+"_sec.txt";
 					//verifica se para o paciente já existe o diretorio de anotacoes
 					File NoteDir = new File(newNotefolder);
 					if(!NoteDir.isDirectory()) {

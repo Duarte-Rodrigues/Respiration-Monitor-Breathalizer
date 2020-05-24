@@ -111,13 +111,13 @@ public class wheezePopUpUnhealthy {
 		JLabel lblNewLabel = new JLabel("Diagnostic");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(553, 210, 97, 34);
+		lblNewLabel.setBounds(495, 200, 97, 34);
 		wheezeFrame.getContentPane().add(lblNewLabel);
 		
 		JLabel DiagnosticTxtBox = new JLabel(state);
 		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.BOLD, 15));
 		DiagnosticTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
-		DiagnosticTxtBox.setBounds(553, 271, 97, 40);
+		DiagnosticTxtBox.setBounds(495, 235, 97, 40);
 		wheezeFrame.getContentPane().add(DiagnosticTxtBox);
 		
 		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
