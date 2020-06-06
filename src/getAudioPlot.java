@@ -1,6 +1,4 @@
 import java.util.concurrent.ExecutionException;
-
-import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;
 import com.mathworks.engine.MatlabExecutionException;
 import com.mathworks.engine.MatlabSyntaxException;

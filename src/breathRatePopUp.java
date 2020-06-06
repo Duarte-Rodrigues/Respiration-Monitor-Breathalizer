@@ -1,43 +1,20 @@
-import java.awt.EventQueue;
-import java.util.Arrays;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
 import javax.swing.JFrame;
-
-import com.mathworks.engine.EngineException;
-import com.mathworks.engine.MatlabEngine;
-import com.mathworks.engine.MatlabExecutionException;
-import com.mathworks.engine.MatlabSyntaxException;
-
 import de.erichseifert.gral.data.DataSeries;
 import de.erichseifert.gral.data.DataSource;
 import de.erichseifert.gral.data.DataTable;
-import de.erichseifert.gral.graphics.Dimension2D;
 import de.erichseifert.gral.graphics.Insets2D;
 import de.erichseifert.gral.graphics.Label;
 import de.erichseifert.gral.graphics.Location;
-import de.erichseifert.gral.graphics.Orientation;
-import de.erichseifert.gral.plots.Plot;
 import de.erichseifert.gral.plots.XYPlot;
-import de.erichseifert.gral.plots.XYPlot.XYLegend;
-import de.erichseifert.gral.plots.legends.AbstractLegend;
 import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.plots.lines.SmoothLineRenderer2D;
 import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
 import de.erichseifert.gral.ui.DrawablePanel;
-import de.erichseifert.gral.ui.InteractivePanel;
-
-import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Shape;
-
-import javax.swing.JTextField;
-import javax.swing.JTable;
 import javax.swing.JSeparator;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import javax.swing.SwingConstants;
@@ -57,92 +34,95 @@ public class breathRatePopUp {
 		
 		breathRateFrame = new JFrame();
 		breathRateFrame.setTitle("Breathing Rate Analysis");
-		breathRateFrame.setBounds(100, 100, 732, 424);
+		breathRateFrame.setBounds(630, 150, 732, 424);
+		breathRateFrame.setResizable(false);
 		breathRateFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		breathRateFrame.getContentPane().setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().setLayout(null);
 		
 		JLabel lblBreathingRate = new JLabel("Breathing Rate");
 		lblBreathingRate.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
-		lblBreathingRate.setBounds(514, 46, 156, 36);
+		lblBreathingRate.setBounds(506, 53, 156, 36);
 		breathRateFrame.getContentPane().add(lblBreathingRate);
 		
-		JLabel lblNewLabel_1 = new JLabel("Hard");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_1.setBounds(567, 216, 40, 22);
-		breathRateFrame.getContentPane().add(lblNewLabel_1);
+		JLabel lblHard = new JLabel("Hard");
+		lblHard.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblHard.setBounds(525, 215, 40, 22);
+		breathRateFrame.getContentPane().add(lblHard);
 		
-		JLabel lblNewLabel_1_1 = new JLabel("Soft");
-		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_1_1.setBounds(567, 249, 40, 20);
-		breathRateFrame.getContentPane().add(lblNewLabel_1_1);
+		JLabel lblSoft = new JLabel("Soft");
+		lblSoft.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblSoft.setBounds(525, 248, 40, 20);
+		breathRateFrame.getContentPane().add(lblSoft);
 		
-		JLabel lblNewLabel_1_1_1 = new JLabel("Mild");
-		lblNewLabel_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_1_1_1.setBounds(567, 280, 40, 22);
-		breathRateFrame.getContentPane().add(lblNewLabel_1_1_1);
+		JLabel lblMild = new JLabel("Mild");
+		lblMild.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblMild.setBounds(525, 279, 40, 22);
+		breathRateFrame.getContentPane().add(lblMild);
 		
-		JLabel lblNewLabel_2 = new JLabel("Type of Breath");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_2.setBounds(528, 187, 103, 22);
-		breathRateFrame.getContentPane().add(lblNewLabel_2);
+		JLabel lblToB = new JLabel("Type of Breath");
+		lblToB.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblToB.setBounds(497, 186, 103, 22);
+		breathRateFrame.getContentPane().add(lblToB);
 		
-		JLabel lblNewLabel_2_1 = new JLabel("No.");
-		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_2_1.setBounds(653, 187, 31, 22);
-		breathRateFrame.getContentPane().add(lblNewLabel_2_1);
+		JLabel lblNo = new JLabel("No.");
+		lblNo.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNo.setBounds(619, 186, 31, 22);
+		breathRateFrame.getContentPane().add(lblNo);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setForeground(Color.BLACK);
-		separator_1.setBounds(514, 207, 192, 2);
+		separator_1.setBounds(494, 215, 168, 2);
 		breathRateFrame.getContentPane().add(separator_1);
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.BLACK);
 		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setBounds(641, 187, 2, 153);
+		separator.setBounds(607, 186, 2, 153);
 		breathRateFrame.getContentPane().add(separator);
 		
 		JLabel breathingRateTxt = new JLabel();
 		breathingRateTxt.setHorizontalAlignment(SwingConstants.CENTER);
 		breathingRateTxt.setFont(new Font("Tahoma", Font.BOLD, 16));
 		breathingRateTxt.setBackground(Color.WHITE);
-		breathingRateTxt.setBounds(538, 93, 97, 38);
+		breathingRateTxt.setBounds(533, 101, 97, 38);
 		breathRateFrame.getContentPane().add(breathingRateTxt);
 		
 		JLabel hardTxt = new JLabel();
 		hardTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		hardTxt.setHorizontalAlignment(SwingConstants.CENTER);
 		hardTxt.setBackground(SystemColor.menu);
-		hardTxt.setBounds(644, 216, 40, 22);
+		hardTxt.setBounds(610, 215, 40, 22);
 		breathRateFrame.getContentPane().add(hardTxt);
 		
 		JLabel softTxt = new JLabel();
 		softTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		softTxt.setHorizontalAlignment(SwingConstants.CENTER);
 		softTxt.setBackground(SystemColor.menu);
-		softTxt.setBounds(644, 248, 40, 22);
+		softTxt.setBounds(610, 247, 40, 22);
 		breathRateFrame.getContentPane().add(softTxt);
 		
 		JLabel mildTxt = new JLabel();
 		mildTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mildTxt.setHorizontalAlignment(SwingConstants.CENTER);
 		mildTxt.setBackground(SystemColor.menu);
-		mildTxt.setBounds(644, 280, 40, 22);
+		mildTxt.setBounds(610, 279, 40, 22);
 		breathRateFrame.getContentPane().add(mildTxt);
 		
-		JLabel lblNewLabel_1_1_1_1 = new JLabel("Total");
-		lblNewLabel_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_1_1_1_1.setBounds(567, 313, 40, 22);
-		breathRateFrame.getContentPane().add(lblNewLabel_1_1_1_1);
+		JLabel lblTotal = new JLabel("Total");
+		lblTotal.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTotal.setBounds(525, 312, 40, 22);
+		breathRateFrame.getContentPane().add(lblTotal);
 		
 		JLabel totalTxt = new JLabel();
 		totalTxt.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		totalTxt.setHorizontalAlignment(SwingConstants.CENTER);
 		totalTxt.setBackground(SystemColor.menu);
-		totalTxt.setBounds(644, 313, 40, 22);
+		totalTxt.setBounds(610, 312, 40, 22);
 		breathRateFrame.getContentPane().add(totalTxt);
 		
 		//Organizar dados do sinal audio raw
+		@SuppressWarnings("unchecked")
 		DataTable audioData = new DataTable(Double.class, Double.class);
 
 		double[] time= new double[audioWav.length];
@@ -181,7 +161,7 @@ public class breathRatePopUp {
 		
 		//Definição do painel onde ficará o sinal audio
 		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
-		audioPlotPanel.setBounds(10, 42, 467, 153);
+		audioPlotPanel.setBounds(10, 42, 478, 153);
 		audioPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(audioPlotPanel);
 		
@@ -196,9 +176,13 @@ public class breathRatePopUp {
 		
 		
 		//Organize envelope data 
+		@SuppressWarnings("unchecked")
 		DataTable envData = new DataTable(Double.class, Double.class);
+		@SuppressWarnings("unchecked")
 		DataTable hardData = new DataTable(Double.class, Double.class);
+		@SuppressWarnings("unchecked")
 		DataTable softData = new DataTable(Double.class, Double.class);
+		@SuppressWarnings("unchecked")
 		DataTable mildData = new DataTable(Double.class, Double.class);
 		
 		if (hard==null) {
@@ -265,7 +249,7 @@ public class breathRatePopUp {
 		//envLegend.setBackground(Color.WHITE);
 		//Create panel for plot
 		DrawablePanel envPlotPanel = new DrawablePanel(envPlot);
-		envPlotPanel.setBounds(10, 232, 467, 153);
+		envPlotPanel.setBounds(10, 232, 478, 153);
 		envPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(envPlotPanel);
 		envPlotPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -307,13 +291,13 @@ public class breathRatePopUp {
 		JLabel audioPlotTitle = new JLabel("Audio Signal");
 		audioPlotTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		audioPlotTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
-		audioPlotTitle.setBounds(157, 11, 97, 22);
+		audioPlotTitle.setBounds(192, 11, 97, 22);
 		breathRateFrame.getContentPane().add(audioPlotTitle);
 		
 		JLabel envPlotTitle = new JLabel("Envelope");
 		envPlotTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		envPlotTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
-		envPlotTitle.setBounds(157, 199, 97, 22);
+		envPlotTitle.setBounds(192, 206, 97, 22);
 		breathRateFrame.getContentPane().add(envPlotTitle);
 		
 		breathRateFrame.setVisible(true);

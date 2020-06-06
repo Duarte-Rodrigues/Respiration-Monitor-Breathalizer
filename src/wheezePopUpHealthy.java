@@ -1,63 +1,24 @@
-
-
-import java.awt.EventQueue;
-import java.util.Arrays;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
-import com.mathworks.engine.EngineException;
-import com.mathworks.engine.MatlabEngine;
-import com.mathworks.engine.MatlabExecutionException;
-import com.mathworks.engine.MatlabSyntaxException;
-
-import de.erichseifert.gral.data.DataSeries;
-import de.erichseifert.gral.data.DataSource;
 import de.erichseifert.gral.data.DataTable;
 import de.erichseifert.gral.graphics.Label;
-import de.erichseifert.gral.graphics.Location;
 import de.erichseifert.gral.plots.XYPlot;
-import de.erichseifert.gral.plots.XYPlot.XYNavigationDirection;
-import de.erichseifert.gral.plots.axes.Axis;
-import de.erichseifert.gral.plots.lines.DefaultLineRenderer2D;
 import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.plots.lines.SmoothLineRenderer2D;
 import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
-import de.erichseifert.gral.ui.DrawablePanel;
 import de.erichseifert.gral.ui.InteractivePanel;
-import sun.awt.image.ToolkitImage;
-
-import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
-
-import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JSeparator;
-
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-
 import javax.swing.SwingConstants;
-import java.awt.SystemColor;
-import java.awt.TexturePaint;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import de.erichseifert.gral.graphics.Drawable;
 import de.erichseifert.gral.graphics.Insets2D;
 
 public class wheezePopUpHealthy {
@@ -99,15 +60,17 @@ public class wheezePopUpHealthy {
 		
 		wheezeFrame = new JFrame();
 		wheezeFrame.setTitle("Wheeze Analysis");
-		wheezeFrame.setBounds(100, 100, 706, 424);
+		wheezeFrame.setBounds(5, 150, 706, 424);
+		wheezeFrame.setResizable(false);
 		wheezeFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		wheezeFrame.getContentPane().setBackground(Color.WHITE);
 		wheezeFrame.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Diagnostic");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(508, 204, 97, 34);
-		wheezeFrame.getContentPane().add(lblNewLabel);
+		JLabel lblDiagnostic = new JLabel("Diagnostic");
+		lblDiagnostic.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblDiagnostic.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDiagnostic.setBounds(508, 204, 97, 34);
+		wheezeFrame.getContentPane().add(lblDiagnostic);
 		
 		JLabel DiagnosticTxtBox = new JLabel(state);
 		DiagnosticTxtBox.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -115,11 +78,11 @@ public class wheezePopUpHealthy {
 		DiagnosticTxtBox.setBounds(508, 237, 97, 40);
 		wheezeFrame.getContentPane().add(DiagnosticTxtBox);
 		
-		JLabel lblNewLabel_2 = new JLabel("Wheezing Intervals");
-		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(465, 87, 185, 27);
-		wheezeFrame.getContentPane().add(lblNewLabel_2);
+		JLabel lblWInter = new JLabel("Wheezing Intervals");
+		lblWInter.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWInter.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblWInter.setBounds(465, 87, 185, 27);
+		wheezeFrame.getContentPane().add(lblWInter);
 		
 		JLabel wheezingIntTxtBox = new JLabel("No wheezes detected");
 		wheezingIntTxtBox.setHorizontalAlignment(SwingConstants.CENTER);
@@ -138,6 +101,7 @@ public class wheezePopUpHealthy {
 		
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++PLOT SIGNAL SPECTRUM+++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
+		@SuppressWarnings("unchecked")
 		DataTable dummyData = new DataTable(Double.class, Double.class);
 		
 		//This is data that just allows to create the plot whose background will be the image we want
@@ -193,11 +157,11 @@ public class wheezePopUpHealthy {
 	
 		wheezeFrame.getContentPane().add(spectrumPanel);
 
-		JLabel lblNewLabel_1 = new JLabel("Audio Signal Spectrum");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(160, 11, 161, 21);
-		wheezeFrame.getContentPane().add(lblNewLabel_1);
+		JLabel lblASS = new JLabel("Audio Signal Spectrum");
+		lblASS.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblASS.setHorizontalAlignment(SwingConstants.CENTER);
+		lblASS.setBounds(160, 11, 161, 21);
+		wheezeFrame.getContentPane().add(lblASS);
 		
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

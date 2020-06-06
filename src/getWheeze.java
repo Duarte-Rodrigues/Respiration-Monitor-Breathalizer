@@ -1,16 +1,7 @@
-
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutionException;
-
-import javax.swing.ImageIcon;
-
-import com.mathworks.engine.EngineException;
 import com.mathworks.engine.MatlabEngine;
 import com.mathworks.engine.MatlabExecutionException;
 import com.mathworks.engine.MatlabSyntaxException;
-
-import sun.awt.image.ToolkitImage;
 
 public class getWheeze {
 	

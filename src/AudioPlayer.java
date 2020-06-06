@@ -38,6 +38,7 @@ public class AudioPlayer {
     String status;
     
     private static DecimalFormat df2 = new DecimalFormat("#.##");
+    private static DecimalFormat df1 = new DecimalFormat("#.#");
       
     AudioInputStream audioInputStream;
     private String internalPath;
@@ -59,7 +60,11 @@ public class AudioPlayer {
     	double sec = this.getCurrentTime();
     	return df2.format(sec);
     }
-
+    
+    public String getStrSecond1df() {
+    	double sec = this.getCurrentTime();
+    	return df1.format(sec);
+    }
 
     // Method to play the audio 
     public void play()  
@@ -150,7 +155,7 @@ public class AudioPlayer {
     }
 
     //==============================================================================================================================
-    //Method to implement a slider
+    //Method to implement the slider indicator 
     public void AudioSlider(JSlider slider, JLabel currentDuration ) {
         AudioInputStream ais = null;
         internalslider=slider;
@@ -179,9 +184,6 @@ public class AudioPlayer {
             }
         });
         
-        
-
-        
         playTimer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -193,7 +195,7 @@ public class AudioPlayer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //int time = (int)getCurrentTime();
-                currentDuration.setText(getStrSecond());//"Current duration: " + 
+                currentDuration.setText(getStrSecond1df());//"Current duration: " + 
             }
         });
         
@@ -206,28 +208,7 @@ public class AudioPlayer {
                 }
                 delayedUpdate.restart();
             }
-        });
-        
-//        slider.addChangeListener(new ChangeListener() {
-//        	public void stateChanged(ChangeEvent event) {
-//        		if(slider.getValueIsAdjusting()==true) {
-//        			clip.stop(); 
-//                    clip.close();
-//                    try {
-//						resetAudioStream();
-//					} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//        			
-//        			
-//        			int value = slider.getValue();
-//        			moveChange(value);
-//        		}
-//
-//        	}
-//        });
-        
+        });      
     }
 
     public int getDesiredFrame() {
@@ -241,7 +222,7 @@ public class AudioPlayer {
         int frame = clip.getFramePosition();//o clip continua a correr
         int progress = (int) (((double) frame / (double) frameCount) * 100);
         internalslider.setValue(progress);
-        currentDuration.setText(getStrSecond());//"Current duration: " + 
+        currentDuration.setText(getStrSecond1df());//"Current duration: " + 
         ignoreStateChange = false;
     }
 
@@ -254,15 +235,5 @@ public class AudioPlayer {
     public int getFullDuration() {
     	int fullSec= (int) duration;
     	return fullSec;
-    }
-    
-//    public void moveChange(int newProgress) {
-//    		
-//    		internalslider.setValue(newProgress);
-//    		int newframe=(int) ((newProgress*(double) frameCount)/100);//importante
-//    		clip.setFramePosition(newframe);
-//            updateState();
-//            this.play();
-//    }
-
+    }    
 }
