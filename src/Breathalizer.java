@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+
 public class Breathalizer extends GUI{
 	
 	public static JFrame frmStart;
@@ -36,7 +37,7 @@ public class Breathalizer extends GUI{
 		welcome.setLayout(null);
 		frmStart.getContentPane().add(welcome);
 		
-		ImageIcon logoImg = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\Breathalizer.png");
+		ImageIcon logoImg = new ImageIcon(GUI.class.getResource("icons/Breathalizer.png"));
 		JLabel logo =new JLabel();
 		logo.setIcon(logoImg);
 		logo.setBounds(80, 50, 371, 126);

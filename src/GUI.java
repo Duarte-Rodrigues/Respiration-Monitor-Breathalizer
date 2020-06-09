@@ -117,15 +117,15 @@ public class GUI{
 		tabbedPane.addTab("   Audio Analysis  ", null, panel_AudioAnalysis, null);
 		tabbedPane.setEnabledAt(2, false);
 		
-		ImageIcon homeIcon = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\home.png");
+		ImageIcon homeIcon = new ImageIcon(GUI.class.getResource("icons/Home_Icon.png"));
 		ImageIcon resizedhome = scaleImage(homeIcon,23,23);
 		tabbedPane.setIconAt(0,resizedhome);
 		
-		ImageIcon selIcon = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\health.png");
+		ImageIcon selIcon = new ImageIcon(GUI.class.getResource("icons/Selection_Icon.png"));
 		ImageIcon resizedsel = scaleImage(selIcon,23,23);
 		tabbedPane.setIconAt(1,resizedsel);
 		
-		ImageIcon AnaIcon = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\computer.png");
+		ImageIcon AnaIcon = new ImageIcon(GUI.class.getResource("icons/Analysis_Icon.png"));
 		ImageIcon resizedAna = scaleImage(AnaIcon,25,25);
 		tabbedPane.setIconAt(2,resizedAna);
 
@@ -135,7 +135,7 @@ public class GUI{
 	public static List<String> HomePage() {
 		
 		//uma fotografia qualquer de pessoa nao lida caso não se prossiga com a escolha apos a interface inicial
-		ImageIcon img = new ImageIcon("C:\\Users\\dtrdu\\Desktop\\Duarte\\Faculdade e Cadeiras\\LIEB\\Project_java\\LIEB_Project\\No Patient Selected.png");
+		ImageIcon img = new ImageIcon(GUI.class.getResource("icons/No_Patient_Selected.png"));
 		ImageIcon resizedImg = scaleImage(img,106,136);
 		photo =new JLabel();
 		photo.setIcon(resizedImg);
