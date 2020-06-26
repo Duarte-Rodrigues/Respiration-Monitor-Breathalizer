@@ -1,3 +1,15 @@
+/**
+ * LIEB PROJECT 2019/2020
+ * BREATHALIZER
+ * @author Duarte Rodrigues
+ * @author João Fonseca
+ * 
+ * breathRatePopUp: Class that pops-up the information about breathing intensity and rate analysis.
+ * It contains the filtered audio plot data, as long as, the information about the number of soft, mild and hard breaths.
+ * These are also assinalated in the plot of the the envelope of the respiration recording.
+ * Finnaly, it also shows the breathing rate (in breths per minute).
+ */
+
 import javax.swing.JFrame;
 import de.erichseifert.gral.data.DataSeries;
 import de.erichseifert.gral.data.DataSource;
@@ -27,11 +39,18 @@ public class breathRatePopUp {
 	private static JFrame breathRateFrame;
 	
 	/**
-	 * @wbp.parser.entryPoint
-	 */
+	   * Method to open a pop-up with the breathing rate and intensity analysis.
+	   *
+	   * @param bpm       breathing rate in bpm.
+	   * @param audioWav  waveform data of the filtered audio.
+	   * @param fs        sampling frequency.
+	   * @param env       signal envelope waveform data.
+	   * @param hard      locations of the hard breaths, refered to the signal envelope.
+	   * @param mild	  locations of the mild breaths, refered to the signal envelope.
+	   * @param soft	  locations of the soft breaths, refered to the signal envelope.
+	   */
 	public void openPopUp(double bpm,double [] audioWav, double fs, double[] env, double[][] hard,double[][] mild, double [][] soft) {
 	
-		
 		breathRateFrame = new JFrame();
 		breathRateFrame.setTitle("Breathing Rate Analysis");
 		breathRateFrame.setBounds(630, 150, 732, 424);
@@ -121,7 +140,7 @@ public class breathRatePopUp {
 		totalTxt.setBounds(610, 312, 40, 22);
 		breathRateFrame.getContentPane().add(totalTxt);
 		
-		//Organizar dados do sinal audio raw
+		// Organization of the filtered signal data
 		@SuppressWarnings("unchecked")
 		DataTable audioData = new DataTable(Double.class, Double.class);
 
@@ -131,9 +150,9 @@ public class breathRatePopUp {
 			audioData.add(time[i],audioWav[i]);
 		}
 
-		//Create plot data
+		// Create plot with the filtered waveform data
 		XYPlot audioPlot = new XYPlot(audioData);
-		//Config Axis
+
 		audioPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
 		audioPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Intensity"));
 		audioPlot.getAxisRenderer(XYPlot.AXIS_Y).getLabel().setRotation(90);
@@ -152,20 +171,20 @@ public class breathRatePopUp {
 		Number max=audioPlot.getAxis(XYPlot.AXIS_Y).getMax();
 		audioPlot.getAxis(XYPlot.AXIS_Y).setMax((double)max+0.10*(double)max);
 		
-		//Add space for labels 
+		// Add space for labels 
 		double insetsTop = 0.0,
-			   insetsLeft = 50.0, //to fit ticks and values
-			   insetsBottom = 50.0, //to fit ticks and values
+			   insetsLeft = 50.0, // to fit ticks and values
+			   insetsBottom = 50.0, // to fit ticks and values
 			   insetsRight = 120.0;
 		audioPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
 		
-		//Definição do painel onde ficará o sinal audio
+		// Declaration of the filtered audio plot panel 
 		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
 		audioPlotPanel.setBounds(10, 42, 478, 153);
 		audioPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(audioPlotPanel);
 		
-		//Lines and points config
+		// Lines and points configuration renderer
 		LineRenderer lines = new SmoothLineRenderer2D();
 		PointRenderer points = new DefaultPointRenderer2D();
 		Color blue=new Color(0,200,255);
@@ -175,7 +194,7 @@ public class breathRatePopUp {
 		audioPlot.setPointRenderers(audioData, points);
 		
 		
-		//Organize envelope data 
+		// Organaization of the signal envelope data
 		@SuppressWarnings("unchecked")
 		DataTable envData = new DataTable(Double.class, Double.class);
 		@SuppressWarnings("unchecked")
@@ -185,6 +204,7 @@ public class breathRatePopUp {
 		@SuppressWarnings("unchecked")
 		DataTable mildData = new DataTable(Double.class, Double.class);
 		
+		// Checking if the audio has all 3 types of breaths and add the data to be marked on the envelope
 		if (hard==null) {
 			hard=new double[0][0];
 		}
@@ -208,8 +228,8 @@ public class breathRatePopUp {
 			mildData.add(mild[k][1],(mild[k][0]));
 		}
 		
-		//Create plot data
-		//We could've used envData to form the plot; but DataSource variables allow better-looking legends
+		// Create signal envolpe data plot with the respective markings
+		//DataSource variables were chosen to create the plot because they allow better-looking legends
 		DataSource envSource=new DataSeries("Envelope",envData);
 		DataSource hardSource=new DataSeries("Hard",hardData);
 		DataSource mildSource=new DataSeries("Mild",mildData);
@@ -217,7 +237,7 @@ public class breathRatePopUp {
 		
 		XYPlot envPlot = new XYPlot(envSource,hardSource,softSource,mildSource);
 
-		//Config Axis
+		// Axis configuration renderering
 		envPlot.getAxisRenderer(XYPlot.AXIS_X).setLabel(new Label("Time (s)"));
 		envPlot.getAxisRenderer(XYPlot.AXIS_Y).setLabel(new Label("Intensity"));
 		envPlot.getAxisRenderer(XYPlot.AXIS_Y).getLabel().setRotation(90);
@@ -234,28 +254,25 @@ public class breathRatePopUp {
 		envPlot.getAxisRenderer(XYPlot.AXIS_Y).setIntersection(-Double.MAX_VALUE);
 		
 		Number max1=envPlot.getAxis(XYPlot.AXIS_Y).getMax();
-		envPlot.getAxis(XYPlot.AXIS_Y).setMax((double)max1+0.10*(double)max1); //increase Y axis maximum by 10%
+		envPlot.getAxis(XYPlot.AXIS_Y).setMax((double)max1+0.10*(double)max1);
 		
-		//Space for labels and legends, with the same size as audioPlot to look better
+		// Space for labels and legends, with the same size as audioPlot to look better
 		envPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
 		
-		//Create legends
+		// Create legends
 		envPlot.setLegendVisible(true);
 		envPlot.getLegend().setFont(new Font("Trebuchet MS",10, 10));
 		envPlot.setLegendLocation(Location.EAST);
 		envPlot.getLegend().setBorderColor(new Color(255,255,255));
-		//envPlot.getLegend().setPosition(insetsRight, insetsRight);
-		//envLegend.setBounds(358, 294, 57, 80);
-		//envLegend.setBackground(Color.WHITE);
-		//Create panel for plot
+
+		// Declaration of the signal enevelop plot panel 
 		DrawablePanel envPlotPanel = new DrawablePanel(envPlot);
 		envPlotPanel.setBounds(10, 232, 478, 153);
 		envPlotPanel.setBackground(Color.WHITE);
 		breathRateFrame.getContentPane().add(envPlotPanel);
 		envPlotPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		
-		//Lines and points config for envelope line
+
+		// Lines and points configuration for envelope line
 		LineRenderer envLines = new SmoothLineRenderer2D();
 		envLines.setColor(blue); points.setColor(blue);
 		envLines.setStroke(new BasicStroke(1)); 
@@ -263,7 +280,7 @@ public class breathRatePopUp {
 		envPlot.setLineRenderers(envSource, envLines);
 		envPlot.setPointRenderers(envSource, points);
 		
-		//Mark hard, mild, soft breath points
+		// Mark hard, mild, soft breath points on the envelope plot
 		PointRenderer hardPoints = new DefaultPointRenderer2D();
 		PointRenderer softPoints = new DefaultPointRenderer2D();
 		PointRenderer mildPoints = new DefaultPointRenderer2D();
@@ -275,9 +292,8 @@ public class breathRatePopUp {
 		envPlot.setPointRenderers(hardSource, hardPoints);
 		envPlot.setPointRenderers(softSource, softPoints);
 		envPlot.setPointRenderers(mildSource, mildPoints);
-		
-		
-		//Write text to text boxes
+
+		// Build a table with the number of each type of breath as long as the total of breaths detected
 		int numberOfHardBreahts=hard.length;
 		int numberOfSoftBreahts=soft.length;
 		int numberOfMildBreahts=mild.length;
@@ -304,7 +320,7 @@ public class breathRatePopUp {
 	}
 	
 	  /**
-	   * Creates a diagonal cross shape.
+	   * Method to create a diagonal cross shape.
 	   *
 	   * @param l  the length of each 'arm'.
 	   * @param t  the thickness.
@@ -328,6 +344,4 @@ public class breathRatePopUp {
 	      p0.closePath();
 	      return p0;
 	  }
-	
-
 }

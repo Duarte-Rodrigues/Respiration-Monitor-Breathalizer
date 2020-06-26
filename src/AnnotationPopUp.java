@@ -1,3 +1,12 @@
+/**
+ * LIEB PROJECT 2019/2020
+ * BREATHALIZER
+ * Performed by: Duarte Rodrigues e João Fonseca
+ * 
+ * AnnotationPopUp: Allows the user to take notes on a particular time of the recording. 
+ * The notes are saved in a "Annotation" folder inside the patient folder
+ */
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -15,6 +24,12 @@ public class AnnotationPopUp {
 
 	private static JFrame AnnotationFrame;
 
+	/**
+	   * Constructor to create the annotation pop-up, and save it in the "Annotations" folder
+	   * 
+	   * @param time  audio paused time, where the note was intended to be taken
+	   * @param path  path to the selected recording
+	   */
 	public AnnotationPopUp(String time,String path) {
 
 		int barInd =  path.lastIndexOf("\\");
@@ -24,11 +39,10 @@ public class AnnotationPopUp {
 
 		AnnotationFrame = new JFrame();
 		AnnotationFrame.setTitle("Note on "+audioName);
-		AnnotationFrame.setBounds(23,23,321,300);// fazer de forma a aparecer debaixo do segundo especifico do grafico
+		AnnotationFrame.setBounds(23,23,321,300);
 		AnnotationFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		AnnotationFrame.getContentPane().setLayout(null);
-
 
 		JLabel header = new JLabel("At "+time+" sec. :");
 		header.setBounds(10,11,200,18);
@@ -46,27 +60,30 @@ public class AnnotationPopUp {
 
 		JButton save = new JButton("Save");
 		save.setBounds(107,208,92,30);
+
+		//Action to save the text written under the "...\patient\Annotations" directory. It is saved as .txt and is updated at any save
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				if (newNote.getText()!=" ") {
 					String rootpath = path.substring(0,barInd);
 					String newNotefolder=rootpath+"\\Annotations";
 					String newfilepath=newNotefolder+"\\"+audioName+"_"+time+"_sec.txt";
-					//verifica se para o paciente já existe o diretorio de anotacoes
 					File NoteDir = new File(newNotefolder);
+
+					//Checks whether the "Annotation" folder already exists
 					if(!NoteDir.isDirectory()) {
 						NoteDir.mkdir();
 					}
-					//cria um ficheiro de texto com as anotações
-					try {
 
+					try {
 						File newFileNote = new File(newfilepath);
 						newFileNote.createNewFile();
 					} catch (IOException er) {
 						er.printStackTrace();
 					}
 
-
+					//The .txt has the name of the recording, the time at which the note was taken and the user description
 					try {
 						FileWriter myWriter = new FileWriter(newfilepath);
 						String bodytext=(newNote.getText()).trim();
@@ -78,11 +95,10 @@ public class AnnotationPopUp {
 					}
 				}
 			}
-
 		});
+
 		AnnotationFrame.getContentPane().add(save);
 		AnnotationFrame.setVisible(true);
-
 	}
 
 }

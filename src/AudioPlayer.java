@@ -1,3 +1,12 @@
+/**
+ * LIEB PROJECT 2019/2020
+ * BREATHALIZER
+ * @author Duarte Rodrigues
+ * @author João Fonseca
+ * 
+ * AudioPlayer: class that implements the functionalities of a typical audio player, such as
+ * start, pause, resume, go to a specific time. It also has an indicative slider of the current time.
+ */
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,48 +39,57 @@ public class AudioPlayer {
 	private Timer playTimer;
 	private boolean ignoreStateChange = false;
 	private JLabel currentDuration;
-	
-	// to store current position 
     private Long currentFrame; 
     private Clip clip;   
-    // current status of clip 
     String status;
+    AudioInputStream audioInputStream;
+    private String internalPath;
     
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private static DecimalFormat df1 = new DecimalFormat("#.#");
-      
-    AudioInputStream audioInputStream;
-    private String internalPath;
-    //===============================================================================================================
-    // constructor to initialize streams and clip 
+
+    /**
+	   * Constructor to initialize audio streams and clip.
+	   *
+	   * @param filePath  Path for the selected audio, in .wav format.
+	   * 
+	   * @throws UnsupportedAudioFileException
+	   * @throws IOException
+	   * @throws LineUnavailableException
+	   */
     public AudioPlayer(String filePath) throws UnsupportedAudioFileException, IOException, LineUnavailableException  { 
-        // create AudioInputStream object 
+
         audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile()); 
-        // create clip reference 
         clip = AudioSystem.getClip(); 
-        // open audioInputStream to the clip 
         clip.open(audioInputStream);
-        
         internalPath=filePath;
     }
-    
+
+    /**
+	   * Method to return a 2 decimal precise time, in seconds.
+	   *
+	   * @return sec  2 decimal precise time.
+	   */
     public String getStrSecond() {
-    	
     	double sec = this.getCurrentTime();
     	return df2.format(sec);
     }
-    
-    public String getStrSecond1df() {
+
+    /**
+	   * Method that returns the elapsed time to indicate alongside the slider.
+	   *
+	   * @return sec  1 decimal precise time.
+	   */
+    public String ElapsedTime() {
     	double sec = this.getCurrentTime();
     	return df1.format(sec);
     }
 
-    // Method to play the audio 
+    /**
+	   * Method to play the audio.
+	   */
     public void play()  
-    { 
-        //start the clip 
-        //clip.start();
-        
+    {
         if (!playing) {
             int frame = getDesiredFrame();
             if (frame >= frameCount) {
@@ -79,39 +97,38 @@ public class AudioPlayer {
             }
             clip.setFramePosition(frame);
             clip.start();
-            //action.setText("Stop");
             playing = true;
             playTimer.start();
         }
-        
         status = "play";
-//      this.getFrames();
     } 
-      
-    // Method to pause the audio 
+    
+    /**
+	   * Method to pause the audio.
+	   */
     public void pause()  
-    { 
-        if (status.equals("paused"))  
-        { 
-            System.out.println("audio is already paused"); 
-            return; 
-        } 
+    {
         this.currentFrame = this.clip.getMicrosecondPosition();
         if (playing) {
         	clip.stop();
         playing = false;
         playTimer.stop();
         }
-        
         status = "paused"; 
     } 
-      
-    // Method to resume the audio 
+
+    /**
+	   * Method to resume the audio.
+	   * 
+	   * @throws UnsupportedAudioFileException
+	   * @throws IOException
+	   * @throws LineUnavailableException
+	   */
     public void resume() throws UnsupportedAudioFileException,IOException, LineUnavailableException
     {    	
+    	//Prevents the clip from glitching if button pressed while playing
         if (status.equals("play"))  
         {
-            System.out.println("Audio is already being played"); 
             return; 
         } 
         clip.close(); 
@@ -119,8 +136,14 @@ public class AudioPlayer {
         clip.setMicrosecondPosition(currentFrame); 
         this.play(); 
     } 
-      
-    // Method to restart the audio 
+
+    /**
+	   * Method to restart the audio.
+	   * 
+	   * @throws UnsupportedAudioFileException
+	   * @throws IOException
+	   * @throws LineUnavailableException
+	   */
     public void restart() throws IOException, LineUnavailableException, UnsupportedAudioFileException  
     { 
         clip.stop(); 
@@ -131,8 +154,16 @@ public class AudioPlayer {
         updateState();
         this.play(); 
     }  
-      
-    // Method to jump over a specific part 
+ 
+    /**
+	   * Method to jump over to a specific time.
+	   * 
+	   * @param c  Position to where we want to jump in microseconds.
+	   * 
+	   * @throws UnsupportedAudioFileException
+	   * @throws IOException
+	   * @throws LineUnavailableException
+	   */
     public void jump(long c) throws UnsupportedAudioFileException, IOException,LineUnavailableException  
     {
         if (c > 0 && c < clip.getMicrosecondLength())  
@@ -146,17 +177,27 @@ public class AudioPlayer {
             this.play(); 
         } 
     } 
-      
-    // Method to reset audio stream and frame
+
+    /**
+	   * Method to reset audio stream and frame.
+	   * 
+	   * @throws UnsupportedAudioFileException
+	   * @throws IOException
+	   * @throws LineUnavailableException
+	   */
     public void resetAudioStream() throws UnsupportedAudioFileException, IOException,LineUnavailableException  
     { 
         audioInputStream = AudioSystem.getAudioInputStream(new File(internalPath).getAbsoluteFile()); 
         clip.open(audioInputStream); 
     }
 
-    //==============================================================================================================================
-    //Method to implement the slider indicator 
-    public void AudioSlider(JSlider slider, JLabel currentDuration ) {
+    /**
+	   * Method to implement the slider indicator.
+	   * 
+	   * @param slider     		 Slider to indicate the moment that is being listened to.
+	   * @param currentDuration  The duration of the audio elapsed untill the moment
+	   */
+    public void AudioSlider(JSlider slider, JLabel currentDuration) {
         AudioInputStream ais = null;
         internalslider=slider;
         this.currentDuration = currentDuration;
@@ -172,7 +213,7 @@ public class AudioPlayer {
             ex.printStackTrace();
         }
         
-
+        // If the player is not running also stop the slider
         clip.addLineListener(new LineListener() {
             @Override
             public void update(LineEvent event) {
@@ -184,22 +225,22 @@ public class AudioPlayer {
             }
         });
         
+        //Update slider possition every 10 ms
         playTimer = new Timer(10, new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 updateState();
             }
         });
         
+        //updates the elapsed time indicator every 250 ms. Since indicator only shows the seconds is more than an enough update rate.
         Timer delayedUpdate = new Timer(250, new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                //int time = (int)getCurrentTime();
-                currentDuration.setText(getStrSecond1df());//"Current duration: " + 
+                currentDuration.setText(ElapsedTime());
             }
         });
-        
         delayedUpdate.setRepeats(false);
+        
+        // Since the slider is a mere indicator, if the user tries to change its position that will take no effect
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -211,27 +252,45 @@ public class AudioPlayer {
         });      
     }
 
+    /**
+	   * Method to extract the audio frame from the slider position (progress).
+	   * 
+	   * @return frame  Frame that corresponds to the slider position.
+	   */
     public int getDesiredFrame() {
         int progress = internalslider.getValue();
         double frame = ((double) frameCount * ((double) progress / 100.0));
         return (int) frame;
     }
 
+    /**
+	   * Method to update the progress of the slider, in order for it to be concordant with the time.
+	   */
     public void updateState() {
         ignoreStateChange = true;
-        int frame = clip.getFramePosition();//o clip continua a correr
+        int frame = clip.getFramePosition();
         int progress = (int) (((double) frame / (double) frameCount) * 100);
         internalslider.setValue(progress);
-        currentDuration.setText(getStrSecond1df());//"Current duration: " + 
+        currentDuration.setText(ElapsedTime());
         ignoreStateChange = false;
     }
-
+ 
+    /**
+	   * Method to get the current time.
+	   * 
+	   * @return time current time.
+	   */
     public double getCurrentTime() {
         int currentFrame = clip.getFramePosition();
         double time = (double) currentFrame / format.getFrameRate();
         return time;
     }
-    
+
+    /**
+	   * Method to get the full audio duration
+	   * 
+	   * @return fullSec full audio duration in seconds.
+	   */
     public int getFullDuration() {
     	int fullSec= (int) duration;
     	return fullSec;

@@ -1,23 +1,36 @@
+/**
+ * LIEB PROJECT 2019/2020
+ * BREATHALIZER
+ * @author Duarte Rodrigues
+ * @author João Fonseca
+ * 
+ * Breathalizer: class that presents the starting frame with the app Logo and first patient import.
+ */
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 public class Breathalizer extends GUI{
 	
 	public static JFrame frmStart;
-	
+	 
+	/**
+	 * Constructor of the class where the starting frame is initialized.
+	 */
 	public Breathalizer() {
 		frmStart = new JFrame();
 	}
-	
+
+	/**
+	 * Method to set the frame features.
+	 */
 	public static void setStartFrameFeatures() {
 		frmStart.setBackground(Color.WHITE);
 		frmStart.setTitle("BREATHALIZER");
@@ -28,6 +41,9 @@ public class Breathalizer extends GUI{
 		frmStart.setVisible(true);
 	}
 
+	/**
+	 * Method that shows the start frame and is the starting point of the app.
+	 */
 	public void start() {
 		setStartFrameFeatures();
 		
@@ -64,36 +80,36 @@ public class Breathalizer extends GUI{
 		lblNewLabel_2.setBounds(10, 297, 379, 14);
 		welcome.add(lblNewLabel_2);
 		boolean selectionLock =true;
-
+		
+		// Action responsible for the first patient folder import
+		// Also has the while loops control variables, in order to set the values to their starting point
+		// After the import this frame disappears, revealling the main app, with the tabs.
 		ImportBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				supposedImports++;
 				Import.ImportInformation(panel_Home,photo);
-				//audio selection loopcontrol variables
 				selectCounter=0;
 				supposedSelections=1;
 				frmRespiratorySoundAnalysis.setLocation(frmStart.getLocation());
 				frmRespiratorySoundAnalysis.setVisible(true);
-				
 				frmStart.setVisible(false);
 			}
 		});
 
-
+		// Fill the Home tab with the empty fields
 		panel_Home.repaint();
 		
 		welcome.revalidate();
 		welcome.repaint();
-		//o programa vai esperar neste loop até se ler a informacao do paciente
+		
+		// Hold step - wait for the user to import the first patient folder
 		do{
-			selectionLock=Import.getLockStop();//lockAtm.get();
+			selectionLock=Import.getLockStop();
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
 		}while (selectionLock==true);
-
 	}
-	
 }

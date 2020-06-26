@@ -91,5 +91,39 @@
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/orsonpdf-1.6-eval.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/servlet.jar"/>
 	<classpathentry kind="lib" path="F:/MATLAB/java/jar/swtgraphics2d.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-barcodes-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-barcodes-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-barcodes-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-font-asian-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-font-asian-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-forms-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-forms-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-forms-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-hyph-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-hyph-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-io-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-io-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-io-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-itext-rups-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-itext-rups-7.0.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-itext-rups-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-itext-rups-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-kernel-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-kernel-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-kernel-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-layout-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-layout-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-layout-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdfa-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdfa-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdfa-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdftest-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdftest-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-pdftest-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-sign-7.0.1.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-sign-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-sign-7.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itext7-itext7-root-7.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="F:/MATLAB/java/jar/itextpdf-5.5.13.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

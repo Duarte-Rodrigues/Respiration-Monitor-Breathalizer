@@ -1,3 +1,14 @@
+/**
+ * LIEB PROJECT 2019/2020
+ * BREATHALIZER
+ * @author Duarte Rodrigues
+ * @author João Fonseca
+ * 
+ * GUI: Main class that holds the Swing components and serves as the starting point to build the interface and to call
+ * the other auxiliary classes with the built-in functions to make our program run properly.
+ * The interface is divided in Home tab, Selection tab and Analysis tab.
+ */
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFrame;
@@ -33,8 +44,6 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
 
-
-
 public class GUI{
 
 	public static JFrame frmRespiratorySoundAnalysis;
@@ -49,14 +58,17 @@ public class GUI{
 	public static Breathalizer breath = new Breathalizer();
 	public static int supposedImports=0;
 	private static boolean analysis=true;
-	private static boolean newaudio;//=false;
+	private static boolean newaudio;
 	public static int selectCounter=0;
 	public static int supposedSelections=1;
 	public static String selectedAud;
 	private static boolean secondpass;
+	public static String state;
+	public static wheezePopUpUnhealthy unhealthyPopUp =new wheezePopUpUnhealthy();;
 	
 	/**
-	 * Launch the application.
+	 * Main method that contains the program body and launchs the app.
+	 * 
 	 * @throws InterruptedException 
 	 * @throws IllegalStateException 
 	 * @throws IllegalArgumentException 
@@ -67,12 +79,17 @@ public class GUI{
 	 * @throws IOException 
 	 * @throws UnsupportedAudioFileException 
 	 */
-
 	public static void main(String[] args) throws IllegalArgumentException, IllegalStateException, InterruptedException, MatlabExecutionException, MatlabSyntaxException, ExecutionException, UnsupportedAudioFileException, IOException, LineUnavailableException {
+		
+		// Initializing the shared MATLAB machine (API)
 		eng=MatlabEngine.startMatlab();
 		InitializeFrameAndTabs();
+		
+		// First cycle to allow the reading of various patients folders
 		do {
 			List<String> audios = HomePage();
+			
+			// Second cycle to allow the reading of various recordings on the same patient
 			do {
 				audioSelection(audios);
 				audioGraphPlayer();
@@ -82,6 +99,9 @@ public class GUI{
 		eng.close();
 	}
 
+	/**
+	   * Method that first starts and initializes the Swing frame and panels.
+	   */
 	public static void InitializeFrameAndTabs() {
 		frmRespiratorySoundAnalysis = new JFrame();
 		frmRespiratorySoundAnalysis.setTitle("Respiratory Sound Monitor");
@@ -89,6 +109,7 @@ public class GUI{
 		frmRespiratorySoundAnalysis.setResizable(false);
 		frmRespiratorySoundAnalysis.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
+            	//Making sure that in the last imported folder, when the user closes the app, the notes are saved
             	Import.savePatAnnotations();
             	System.exit(0);
             }
@@ -132,9 +153,14 @@ public class GUI{
 		panel_AudioAnalysis.setLayout(null);
 	}
 
+	/**
+	   * Method with the components of the Home tab, showing the patient information.
+	   *
+	   * @return audios  List of the paths for the recordings of the patient.
+	   */
 	public static List<String> HomePage() {
 		
-		//uma fotografia qualquer de pessoa nao lida caso não se prossiga com a escolha apos a interface inicial
+		// Icon to show when no patient is imported
 		ImageIcon img = new ImageIcon(GUI.class.getResource("icons/No_Patient_Selected.png"));
 		ImageIcon resizedImg = scaleImage(img,106,136);
 		photo =new JLabel();
@@ -173,6 +199,8 @@ public class GUI{
 		panel_Home.add(ImportBtn);
 		boolean selectionLock =true;
 
+		// Action to import the patient folder with the corresponding data and audios
+		// Also has the while loops control variables in order to advance for the next iteration only in the right combination of values
 		ImportBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				supposedImports++;
@@ -183,7 +211,6 @@ public class GUI{
 					Import.savePatAnnotations();
 				}
 				Import.ImportInformation(panel_Home,photo);
-				//audio selection loopcontrol variables
 				selectCounter=0;
 				supposedSelections=1;
 				newaudio=false;
@@ -191,13 +218,16 @@ public class GUI{
 		});
 
 		panel_Home.repaint();
-		//Mostra a frame inicial Introdutória
+		
+		// In this step we show the introductory frame, only once.
+		// At this point the program body with tabs is already loaded, but not visible.
+		// After the first import the starting frame get´s immeadiatelly substituted, preventing the user from waiting.
 		if (!secondpass) {
 			breath.start();
 			secondpass= true;
 		}
 		
-		//o programa vai esperar neste loop até se ler a informacao do paciente
+		// Hold step - wait for the user to import the patient folder
 		do{
 			selectionLock=Import.getLockStop();
 			try {
@@ -209,11 +239,18 @@ public class GUI{
 
 		Import.setLockStop(true);
 		analysis = true;
-		//lista dos paths para os audios
+		
+		// From the import, in Home tab all information is presented, besides the audio/recording list.
+		//that is passed for the selection tab.
 		List<String> audios = Import.getAudioList();
 		return audios;
 	}
 
+	/**
+	   * Method with the components of the first part of the Selection tab, showing the patient recordings, being able to select one.
+	   *
+	   * @param audios  List of the paths for the recordings of the patient.
+	   */
 	public static void audioSelection(List<String> audios) {
 		tabbedPane.setEnabledAt(1, true);
 		String audioNames[] = new String[audios.size()+1];
@@ -224,10 +261,12 @@ public class GUI{
 			audioNames[i+1] = (audios.get(i)).substring(barIndx+1,pointIndx);
 		}
 		
+		// ComboBox with the list of the recordings
 		JComboBox<String> audioChoice = new JComboBox<String>(audioNames);
 		audioChoice.setBounds(28, 15, 250, 23);
 		panel_AudioSelect.add(audioChoice);
 
+		// Action to select the desired recording.
 		JButton btnSelectAudio = new JButton("Select");
 		btnSelectAudio.setBounds(390, 15, 90, 23);
 		btnSelectAudio.addActionListener(new ActionListener() {
@@ -246,7 +285,7 @@ public class GUI{
 			panel_AudioSelect.repaint();
 		}
 
-		//o programa vai esperar neste loop até se ler o audio que se pretende ouvir e analisar
+		// Hold step - wait for the user to selct the recording that he wants to hear or analize
 		do{
 			try {
 				Thread.sleep(200);
@@ -254,27 +293,36 @@ public class GUI{
 				e1.printStackTrace();
 			}
 		}while (analysis==true);
+		
 		int chosenIndex = 0;
 		for(int i=0;i<audios.size();i++) {
 			if (audios.get(i).contains(selectedAud)){
 				chosenIndex=i;
 			}
 		}
+		
+		// In the end of this function the path to the selected recording is defined (filename)
 		filename=audios.get(chosenIndex);
 	}
 
+	/**
+	   * Method with components for the audio player and sound graph.
+	   */
 	@SuppressWarnings("unchecked")
 	public static void audioGraphPlayer() throws MatlabExecutionException, MatlabSyntaxException, IllegalArgumentException, IllegalStateException, InterruptedException, ExecutionException, UnsupportedAudioFileException, IOException, LineUnavailableException {
 
+		// Calls the class responsible to get the filtered waveform data (from MATLAB)
 		getAudioPlot Audplot = new getAudioPlot(filename,eng);
 		double[] wavefrm=Audplot.getWavefrm();
 		double FS=Audplot.getFS();
-		//++++++++++++++++++++++++++++++++PLOT AUDIO SIGNAL++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+		
+		//++++++++++++++++++++++++++++++++++++++++++++PLOT AUDIO SIGNAL++++++++++++++++++++++++++++++++++++++++++++++++++++
+		
+		// Calls the class with the audio player functionalities
 		AudioPlayer audioSel= new AudioPlayer(filename);
 		DataTable audioData = new DataTable(Double.class, Double.class);
 
-		//Conversão para tempo
+		// Conversion to time
 		double[] time= new double[wavefrm.length];
 
 		for(int i=0; i<time.length;i++) {
@@ -282,17 +330,15 @@ public class GUI{
 			audioData.add(time[i],wavefrm[i]);
 		}
 
-
+		// Design the sound plot using the waveform data. Implementation using the Graal plug-in
 		XYPlot audioPlot = new XYPlot(audioData);
 
-		//Definição do painel onde ficará o sinal audio
 		DrawablePanel audioPlotPanel = new DrawablePanel(audioPlot);
 		audioPlotPanel.setBounds(28, 73, 452, 121);
 		audioPlotPanel.setBackground(Color.WHITE);
 
 		panel_AudioSelect.add(audioPlotPanel);
 
-		//Lines and points config
 		LineRenderer lines = new SmoothLineRenderer2D();
 		PointRenderer points = new DefaultPointRenderer2D();
 		Color blue=new Color(0,200,255);
@@ -302,7 +348,8 @@ public class GUI{
 		audioPlot.setPointRenderers(audioData, points);
 
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++Audio Player Specs+++++++++++++++++++++++++++++++++++++++++++++
-		//Slider to accompany the audio progression
+		
+		// Elapsed time and slider indication to accompany the audio (not interactive, only a indicator)
 		JLabel currentDuration = new JLabel ("0");
 		currentDuration.setBounds(2, 53, 31,14);
 		JSlider slider = new JSlider(0, 100);
@@ -312,7 +359,7 @@ public class GUI{
 		audioSel.AudioSlider(slider,currentDuration);
 		panel_AudioSelect.add(slider);
 		panel_AudioSelect.add(currentDuration);
-
+		
 		JButton btnResumeAudio = new JButton("Resume");
 		btnResumeAudio.setBounds(10, 239, 90, 23);
 		btnResumeAudio.addActionListener(new ActionListener() {
@@ -337,7 +384,6 @@ public class GUI{
 		});
 		btnPlayAudio.setBounds(30, 239, 70, 23);
 		panel_AudioSelect.add(btnPlayAudio);
-
 
 		JButton btnPauseAudio = new JButton("Pause");
 		btnPauseAudio.addActionListener(new ActionListener() {
@@ -391,6 +437,7 @@ public class GUI{
 		lblTime.setBounds(231, 209, 46, 14);
 		panel_AudioSelect.add(lblTime);
 
+		// Action where the user can take notes relative to a specific time of the recording
 		JButton btnTakeNote = new JButton("Take Note");
 		btnTakeNote.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -402,12 +449,16 @@ public class GUI{
 		btnTakeNote.setBounds(385, 205, 95, 23);
 		panel_AudioSelect.add(btnTakeNote);
 		tabbedPane.setEnabledAt(2, true);
-		//important to reveal the information of the panel
+		
 		panel_AudioSelect.revalidate();
 		panel_AudioSelect.repaint();
 	}
 
+	/**
+	   * Method with the components of the Analysis tab, revealing information about breathing rate and the wheeze detection.
+	   */
 	public static void audioAnalysis() throws MatlabExecutionException, MatlabSyntaxException, IllegalArgumentException, IllegalStateException, InterruptedException, ExecutionException {
+		
 		JTextPane BreathingExp = new JTextPane();	
 		BreathingExp.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		BreathingExp.setText("The recorded breathing sound\r\n" + 
@@ -422,7 +473,7 @@ public class GUI{
 		BreathingExp.setBackground(Color.WHITE);
 		BreathingExp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		BreathingExp.setEditable(false);
-		BreathingExp.setBounds(42, 102, 174, 171);
+		BreathingExp.setBounds(42, 82, 174, 171);
 		panel_AudioAnalysis.add(BreathingExp);
 
 		JTextPane WheezingDetExp = new JTextPane();
@@ -440,23 +491,25 @@ public class GUI{
 		WheezingDetExp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		WheezingDetExp.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		WheezingDetExp.setEditable(false);
-		WheezingDetExp.setBounds(304, 102, 179, 171);
+		WheezingDetExp.setBounds(304, 82, 179, 171);
 		panel_AudioAnalysis.add(WheezingDetExp);
 
-		JLabel lblNewLabel_6 = new JLabel("Types of Analysis");
-		lblNewLabel_6.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNewLabel_6.setBounds(200, 24, 137, 25);
-		panel_AudioAnalysis.add(lblNewLabel_6);
+		JLabel typesAnalysis = new JLabel("Types of Analysis");
+		typesAnalysis.setFont(new Font("Tahoma", Font.BOLD, 15));
+		typesAnalysis.setBounds(200, 12, 137, 25);
+		panel_AudioAnalysis.add(typesAnalysis);
 
-		JButton btnNewButton = new JButton("Breathing Rate");
-		btnNewButton.setBounds(58, 68, 144, 23);
-		panel_AudioAnalysis.add(btnNewButton);
+		JButton btnBreathrate = new JButton("Breathing Rate");
+		btnBreathrate.setBounds(58, 48, 144, 23);
+		panel_AudioAnalysis.add(btnBreathrate);
 
-		JButton btnNewButton_1 = new JButton("Wheeze Detection");
-		btnNewButton_1.setBounds(321, 68, 151, 23);
-		panel_AudioAnalysis.add(btnNewButton_1);
-
-		//+++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++
+		JButton btnWheezeDetect = new JButton("Wheeze Detection");
+		btnWheezeDetect.setBounds(321, 48, 151, 23);
+		panel_AudioAnalysis.add(btnWheezeDetect);
+		
+		//++++++++++++++++++++++++++++++++++++++++GET MATLAB BREATHING RATE DATA+++++++++++++++++++++++++++++++++++++++++++
+		
+		// Calls class that extracts from the MATLAB signal processing algorithm, the breathing rate and intensity data
 		getBreathingRate br=new getBreathingRate(filename,eng);
 
 		double bpm=br.getBpm();
@@ -467,25 +520,29 @@ public class GUI{
 		double[][] soft=br.getSoft();
 		double[][] mild=br.getMild();
 
-		btnNewButton.addActionListener(new ActionListener() {
+		// Action to reveal the pop-up with the breathing rate information information
+		btnBreathrate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				breathRatePopUp BRpopUp=new breathRatePopUp();
 				BRpopUp.openPopUp(bpm, wave, fs, env, hard, mild, soft);
 			}
 		});
-		//+++++++++++++++++++++++++++++++++++++GET WHEEZING DATA++++++++++++++++++++++++++++++++++++++++++++++++
+		
+		//++++++++++++++++++++++++++++++++++++++++++++++GET WHEEZING DATA+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		
+		// Calls class that extracts from the MATLAB signal processing algorithm, the wheeze location and diagnostic data
 		getWheeze wheeze=new getWheeze(filename,eng);
 		double[] x=wheeze.getX();
-		String state=wheeze.getState();
+		state=wheeze.getState();
 		double fs1=wheeze.getFs();
 		String normSpectrumPath=wheeze.getNormSpectrumPath();
 		String wheezeSpectrumPath=wheeze.getWheezeSpectrumPath();
 		double[] wheezeActivity=wheeze.getWheezeActivity();
 
-		btnNewButton_1.addActionListener(new ActionListener() {
+		// Action to reveal the pop-up, whether healthy or unhealthy, with the wheezes detection information
+		btnWheezeDetect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (state.equals("Unhealthy")) {
-					wheezePopUpUnhealthy unhealthyPopUp=new wheezePopUpUnhealthy();
 					try {
 						unhealthyPopUp.openPopUp(x,state, fs1, normSpectrumPath, wheezeSpectrumPath, wheezeActivity);
 					} catch (IOException e1) {
@@ -512,6 +569,7 @@ public class GUI{
 			panel_AudioAnalysis.repaint();
 		}
 
+		// Hold step - wait for the user to import a new folder and restart the loop
 		do{
 			try {
 				Thread.sleep(200);
@@ -521,6 +579,7 @@ public class GUI{
 			}
 		}while (supposedSelections==selectCounter);
 		
+		// To add new information about a new patient the previous has to be removed
 		if(selectCounter>=1) {
 			supposedSelections++;
 			panel_AudioAnalysis.removeAll();
@@ -528,6 +587,13 @@ public class GUI{
 		}
 	}
 
+	/**
+	   * Method to rescale an image for the desired size.
+	   *
+	   * @param icon  Original image, in ImageIcon format.
+	   * @param w	  Desired width for the rescaled image.
+	   * @param h	  Desired height for the rescaled image.
+	   */
 	public static ImageIcon scaleImage(ImageIcon icon, int w, int h)
 	{
 		int nw = icon.getIconWidth();
