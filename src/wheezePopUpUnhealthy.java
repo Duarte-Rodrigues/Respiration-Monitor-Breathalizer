@@ -1,6 +1,6 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * @author Duarte Rodrigues
  * @author João Fonseca
  * 
@@ -24,7 +24,7 @@ import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.plots.lines.SmoothLineRenderer2D;
 import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
-import de.erichseifert.gral.ui.InteractivePanel;
+import de.erichseifert.gral.ui.DrawablePanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Image;
@@ -40,7 +40,7 @@ import javax.swing.JScrollPane;
 public class wheezePopUpUnhealthy {
 
 	private static JFrame wheezeFrame;
-	public static InteractivePanel wheezeActivityPanel;
+	public static DrawablePanel wheezeActivityPanel;
 
 	/**
 	 * Method to display the pop-up with the the information about the wheezes detection in an unhealthy diagnostic, 
@@ -168,7 +168,7 @@ public class wheezePopUpUnhealthy {
 		wheezeActivityPlot.setLegendLocation(Location.EAST);
 		wheezeActivityPlot.getLegend().setBorderColor(new Color(255,255,255));
 		//Panel to host the filtered audio plot and the highlighted wheeze regions
-		wheezeActivityPanel = new InteractivePanel(wheezeActivityPlot);
+		wheezeActivityPanel = new DrawablePanel(wheezeActivityPlot);
 		wheezeActivityPanel.setBounds(10, 277, 665, 108);
 		wheezeActivityPanel.setBackground(Color.WHITE);
 		wheezeFrame.getContentPane().add(wheezeActivityPanel);
@@ -223,7 +223,7 @@ public class wheezePopUpUnhealthy {
 		dummyPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
 
 		//Set panel with the spectrum plot
-		InteractivePanel spectrumPanel = new InteractivePanel(dummyPlot);
+		DrawablePanel spectrumPanel = new DrawablePanel(dummyPlot);
 		spectrumPanel.setBounds(10, 28, 500, 108);
 		spectrumPanel.setBackground(Color.WHITE);
 		spectrumPanel.setLayout(null);
@@ -249,7 +249,7 @@ public class wheezePopUpUnhealthy {
 
 		XYPlot dummyPlot2=dummyPlot;
 
-		InteractivePanel wheezeSpectrumPanel = new InteractivePanel(dummyPlot2);
+		DrawablePanel wheezeSpectrumPanel = new DrawablePanel(dummyPlot2);
 		wheezeSpectrumPanel.setBounds(10, 155, 500, 108);
 		wheezeSpectrumPanel.setBackground(Color.WHITE);
 

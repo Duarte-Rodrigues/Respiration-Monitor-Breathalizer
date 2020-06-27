@@ -1,10 +1,10 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * Performed by: Duarte Rodrigues e João Fonseca
  * 
  * AnnotationPopUp: Allows the user to take notes on a particular time of the recording. 
- * The notes are saved in a "Annotation" folder inside the patient folder
+ * The notes are saved in a "Annotations" folder inside the patient folder.
  */
 
 import java.awt.Color;

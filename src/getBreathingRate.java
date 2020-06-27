@@ -1,6 +1,6 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * @author Duarte Rodrigues
  * @author João Fonseca
  * 
@@ -53,7 +53,7 @@ public class getBreathingRate {
 	/**
 	 * Method to get the breaths per minute output information.
 	 * 
-	 * @return bpm  breaths per minute.
+	 * @return bpm  breaths per minute estimation of the audio.
 	 */
 	public double getBpm() {
 		return bpm;

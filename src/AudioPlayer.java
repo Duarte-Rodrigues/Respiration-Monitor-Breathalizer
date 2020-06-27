@@ -1,6 +1,6 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * @author Duarte Rodrigues
  * @author João Fonseca
  * 
@@ -91,7 +91,7 @@ public class AudioPlayer {
     public void play()  
     {
         if (!playing) {
-            int frame = getDesiredFrame();
+            int frame = getStartDesiredFrame();
             if (frame >= frameCount) {
                 frame = 0;
             }
@@ -257,7 +257,7 @@ public class AudioPlayer {
 	   * 
 	   * @return frame  Frame that corresponds to the slider position.
 	   */
-    public int getDesiredFrame() {
+    public int getStartDesiredFrame() {
         int progress = internalslider.getValue();
         double frame = ((double) frameCount * ((double) progress / 100.0));
         return (int) frame;

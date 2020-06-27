@@ -1,6 +1,6 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * @author Duarte Rodrigues
  * @author João Fonseca
  * 
@@ -60,7 +60,7 @@ public class getWheeze {
 	/**
 	 * Method to get the sampling frequency of the audio.
 	 * 
-	 * @return fs  sampling frequency.
+	 * @return fs  new sampling rate of the downsampled signal.
 	 */
 	public double getFs() {
 		return fs;

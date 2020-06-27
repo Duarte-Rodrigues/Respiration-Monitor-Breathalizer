@@ -1,6 +1,6 @@
 /**
  * LIEB PROJECT 2019/2020
- * BREATHALIZER
+ * BREATHALIZER - Breathing Monitor
  * @author Duarte Rodrigues
  * @author João Fonseca
  * 
@@ -18,7 +18,7 @@ import de.erichseifert.gral.plots.lines.LineRenderer;
 import de.erichseifert.gral.plots.lines.SmoothLineRenderer2D;
 import de.erichseifert.gral.plots.points.DefaultPointRenderer2D;
 import de.erichseifert.gral.plots.points.PointRenderer;
-import de.erichseifert.gral.ui.InteractivePanel;
+import de.erichseifert.gral.ui.DrawablePanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Image;
@@ -119,7 +119,7 @@ public class wheezePopUpHealthy {
 		dummyPlot.setInsets(new Insets2D.Double(insetsTop, insetsLeft, insetsBottom, insetsRight));
 				
 		//Set panel with the plot
-		InteractivePanel spectrumPanel = new InteractivePanel(dummyPlot);
+		DrawablePanel spectrumPanel = new DrawablePanel(dummyPlot);
 		spectrumPanel.setBounds(10, 49, 500, 325);
 		spectrumPanel.setBackground(Color.WHITE);
 		spectrumPanel.setLayout(null);
