@@ -483,7 +483,7 @@ public class GUI{
 				"sounds.These wheezes are\r\n" + 
 				"then registered and highlighted\r\n" + 
 				"in the sound wave.\r\n\n" + 
-				"In the end the algorith\r\n" + 
+				"In the end the algorithm\r\n" + 
 				"proposes whether the patient\r\n" + 
 				"is healthy or not.");
 		WheezingDetExp.setForeground(Color.BLACK);
